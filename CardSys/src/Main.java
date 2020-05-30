@@ -11,10 +11,12 @@ public class Main {
 		InputStream in = comPort.getInputStream();
 		try
 		{
-			for(int i=0; i <10; i++) {
-				//Tentar salvar retorno em string.
+			while(true){//manter o projeto aberto.
+				for(int i=0; i <10; i++) {
+					//chamar classes a pertir desta.
+				}
+				in.close();
 			}
-			in.close();
 		} catch (Exception e) { e.printStackTrace(); }
 		comPort.closePort();
 	}
