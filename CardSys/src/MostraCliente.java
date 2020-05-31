@@ -21,12 +21,11 @@ public class MostraCliente extends JFrame {
 	public static void main(String[] args) {
 		while(true){
 			Arduino ard = new Arduino();
-			String id = ard.ler();
-			//rever condicao de repeticao para mostraprodutos.
+			String ID = ard.ler();
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-							MostraCliente frame = new MostraCliente(id);
+							MostraCliente frame = new MostraCliente(ID);
 							frame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -58,6 +57,17 @@ public class MostraCliente extends JFrame {
 		IDcartao.setFont(new Font("Tahoma", Font.PLAIN, 70));
 		IDcartao.setBounds(10, 104, 990, 130);
 		contentPane.add(IDcartao);
+		
+		JButton btnAddProduto = new JButton("Adicionar Novo Produto");
+		btnAddProduto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					///aki
+				} catch (Exception e2) {}
+			}
+		});
+		btnAddProduto.setFont(new Font("Tahoma", Font.PLAIN, 50));
+		btnAddProduto.setBounds(214, 520, 555, 89);
+		contentPane.add(btnAddProduto);
 	}
-
 }
