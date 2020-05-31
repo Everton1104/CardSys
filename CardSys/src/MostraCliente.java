@@ -17,17 +17,18 @@ public class MostraCliente extends JFrame {
 	private JPanel contentPane;
 
 	/**
-	 * Launch the application.
+	 * Jefferson mamae fez BOLO!
 	 */
 	public static void main(String[] args) {
 		while(true){
 			Arduino ard = new Arduino();
 			String id = ard.ler();
+			//rever condicao de repeticao para mostraprodutos.
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						MostraCliente frame = new MostraCliente(id);
-						frame.setVisible(true);
+							MostraCliente frame = new MostraCliente(id);
+							frame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
