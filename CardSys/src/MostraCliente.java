@@ -17,7 +17,6 @@ public class MostraCliente extends JFrame {
 	private JPanel contentPane;
 
 	/**
-	 * Jefferson mamae fez BOLO!
 	 */
 	public static void main(String[] args) {
 		while(true){
