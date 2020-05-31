@@ -17,7 +17,8 @@ public class Arduino {
 			}
 			in.close();
 			comPort.closePort();
+			System.out.println(res);
 			return res;
-		} catch (Exception e) {return "";}
+		} catch (Exception e) {return "erro";}
 	}
 }

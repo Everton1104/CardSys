@@ -17,17 +17,20 @@ public class MostraCliente extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Arduino ard = new Arduino();
-					MostraCliente frame = new MostraCliente(ard.ler());
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
+		while(true){
+			Arduino ard = new Arduino();
+			String id = ard.ler();
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						MostraCliente frame = new MostraCliente(id);
+						frame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	/**
@@ -50,7 +53,7 @@ public class MostraCliente extends JFrame {
 		IDcartao.setHorizontalAlignment(SwingConstants.CENTER);
 		IDcartao.setForeground(Color.ORANGE);
 		IDcartao.setFont(new Font("Tahoma", Font.PLAIN, 70));
-		IDcartao.setBounds(489, -7, 278, 130);
+		IDcartao.setBounds(10, 104, 990, 130);
 		contentPane.add(IDcartao);
 	}
 
