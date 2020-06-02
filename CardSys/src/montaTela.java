@@ -1,4 +1,5 @@
-import java.awt.Color;
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.Font;
 
 import javax.swing.JFrame;
@@ -6,10 +7,32 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import java.awt.Color;
 
-public class MostraCliente extends JFrame{
+public class montaTela extends JFrame {
+
 	private JPanel contentPane;
-	public String mostra(String ID) {
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					montaTela frame = new montaTela();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public montaTela() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1024, 768);
 		contentPane = new JPanel();
@@ -33,14 +56,11 @@ public class MostraCliente extends JFrame{
 		lblNewLabel_2.setBounds(33, 177, 95, 125);
 		contentPane.add(lblNewLabel_2);
 		
-		JLabel lblNewLabel_2_1 = new JLabel(ID);
+		JLabel lblNewLabel_2_1 = new JLabel("ID:");
 		lblNewLabel_2_1.setForeground(Color.ORANGE);
 		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.PLAIN, 60));
 		lblNewLabel_2_1.setBounds(122, 177, 854, 125);
 		contentPane.add(lblNewLabel_2_1);
-		
-		
-		return ID;
 	}
 
 }
