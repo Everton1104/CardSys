@@ -12,8 +12,8 @@ public class Arduino {
 			comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
 			InputStream in = comPort.getInputStream();
 			String res = "";
-			for(int i = 0; i < 10; i++){
-				res += in.read();
+			for(int i = 0; i < 8; i++){
+				res += (char)in.read();
 			}
 			in.close();
 			comPort.closePort();
