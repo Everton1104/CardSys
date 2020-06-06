@@ -1,67 +1,63 @@
-//STEP 1. Import required packages
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Banco {
     // JDBC driver name and database URL
-
     static final String JDBC_DRIVER = "org.mariadb.jdbc.Driver";
-    static final String DB_URL = "jdbc:mariadb://127.0.0.1/CardSysDB";
+    static final String DB_URL = "jdbc:mariadb://127.0.0.1/cardsysdb";
 
     //  Database credentials
     static final String USER = "root";
-    static final String PASS = "";
+    static final String PASS = "root";
 
-    public static void main(String[] args) {
+    public String bancoInit(String ID){
         Connection conn = null;
         Statement stmt = null;
+        String tipo = "";
         try {
-            //STEP 2: Register JDBC driver
-            Class.forName("org.mariadb.jdbc.Driver");
+            //Register JDBC driver
+            Class.forName(JDBC_DRIVER);
 
-            //STEP 3: Open a connection
-            System.out.println("Connecting to a selected database...");
+            //Open a connection
+            System.out.println("Connecting database...");
             conn = DriverManager.getConnection(
-                    "jdbc:mariadb://192.168.100.174/db", "root", "root");
+                    DB_URL, USER, PASS);
             System.out.println("Connected database successfully...");
 
-            //STEP 4: Execute a query
-            System.out.println("Creating table in given database...");
+            //Definicao do tipo de cartao.
             stmt = conn.createStatement();
-
-            String sql = "CREATE TABLE REGISTRATION "
-                    + "(id INTEGER not NULL, "
-                    + " first VARCHAR(255), "
-                    + " last VARCHAR(255), "
-                    + " age INTEGER, "
-                    + " PRIMARY KEY ( id ))";
-
-            stmt.executeUpdate(sql);
-            System.out.println("Created table in given database...");
-        } catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } catch (Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        } finally {
-            //finally block used to close resources
+            String sql = "SELECT tipo FROM idcard WHERE cartao = "+ID+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if (res.next()) {
+	            tipo = res.getString("tipo");
+            }
+            if(tipo.contains("CLIENTE")) {
+            	sql = "";
+            }else {
+            	sql = "";
+            }
+            res = stmt.executeQuery(sql);
+        	if (res.next()) {
+        		//recuperar dados
+        	}
+        } 
+        catch (SQLException se) {se.printStackTrace();} 
+        catch (Exception e) {e.printStackTrace();} 
+        finally {
             try {
                 if (stmt != null) {
                     conn.close();
+                    System.out.println("Fechando conexao stmt.");
                 }
-            } catch (SQLException se) {
-            }// do nothing
+            } 
+            catch (SQLException se) {}
             try {
                 if (conn != null) {
                     conn.close();
+                    System.out.println("Fechando conexao conn.");
                 }
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }//end finally try
-        }//end try
-        System.out.println("Goodbye!");
-    }//end main
-}//end JDBCExample
+            } 
+            catch (SQLException se) {se.printStackTrace();}
+        }
+        return ID;
+    }
+}

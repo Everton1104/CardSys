@@ -10,6 +10,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 public class MostraProduto extends JFrame{
+	String opc = "";
 	/**
 	 * 
 	 */
@@ -17,7 +18,10 @@ public class MostraProduto extends JFrame{
 	private JPanel contentPane;
 	
 	public String mostra(String IDP) {
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		
+		
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1024, 768);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -30,16 +34,27 @@ public class MostraProduto extends JFrame{
 		lblNewLabel.setBounds(267, 88, 420, 106);
 		contentPane.add(lblNewLabel);
 		
-		JButton btnOK = new JButton("OK");
-		btnOK.addActionListener(new ActionListener() {
+		JButton btnFim = new JButton("Finalizar");
+		btnFim.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				opc = "fim";
 			}
 		});
-		btnOK.setFont(new Font("Tahoma", Font.PLAIN, 60));
-		btnOK.setBounds(351, 309, 258, 123);
-		contentPane.add(btnOK);
-		return IDP;
+		btnFim.setFont(new Font("Tahoma", Font.PLAIN, 60));
+		btnFim.setBounds(63, 365, 371, 106);
+		contentPane.add(btnFim);
+		
+		JButton btnAdd = new JButton("Adicionar\r\n");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				return;
+			}
+		});
+		btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 60));
+		btnAdd.setBounds(523, 365, 371, 106);
+		contentPane.add(btnAdd);
+		
+		return opc;
 	}
 
 }

@@ -7,6 +7,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 public class Tela_inicial extends JFrame {
+	static boolean loop = true;
 	public Tela_inicial() {
 	}
 
@@ -15,6 +16,7 @@ public class Tela_inicial extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	
 
 	/**
 	 * Launch the application.
@@ -28,11 +30,18 @@ public class Tela_inicial extends JFrame {
 			frame.montaTela();
 			frame.setVisible(true);
 			String ID = ard.ler();
-			frameCliente.mostra(ID);
-			frameCliente.setVisible(true);
-			String IDP = ard.ler();
-			frameProduto.mostra(IDP);
-			frameProduto.setVisible(true);
+			loop = true;
+			while(loop==true){
+				frameCliente.mostra(ID);
+				frameCliente.setVisible(true);
+				String IDP = ard.ler();
+				frameProduto.mostra(IDP);
+				frameProduto.setVisible(true);
+				String lp = ard.ler();
+				if(lp.contentEquals(ID)) {
+					loop = false;
+				}
+			}
 		}
 	}
 	
