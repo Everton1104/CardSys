@@ -11,16 +11,9 @@ public class Tela_inicial extends JFrame {
 	public Tela_inicial() {
 	}
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	
-
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) throws Exception {
 		Arduino ard = new Arduino();
 		Tela_inicial frame = new Tela_inicial();
@@ -32,13 +25,23 @@ public class Tela_inicial extends JFrame {
 			String ID = ard.ler();
 			loop = true;
 			while(loop==true){
-				frameCliente.mostra(ID);
-				frameCliente.setVisible(true);
-				String IDP = ard.ler();
-				frameProduto.mostra(IDP);
-				frameProduto.setVisible(true);
-				String lp = ard.ler();
-				if(lp.contentEquals(ID)) {
+				Banco banco = new Banco();
+				String tipo = banco.bancoID(ID);
+				if(tipo.contentEquals("cliente")) {
+					frameCliente.mostra(ID);
+					frameCliente.setVisible(true);
+					String IDP = ard.ler();
+					tipo = banco.bancoID(IDP);
+					if(tipo.contentEquals("produto")) {
+						frameProduto.mostra(IDP);
+						frameProduto.setVisible(true);
+						//esperar qtde e salvar no bd.
+					}else {
+						//fecha a conta.
+						loop = false;
+					}
+				}else {
+					//cadastro de produtos
 					loop = false;
 				}
 			}

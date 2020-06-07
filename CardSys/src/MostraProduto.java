@@ -19,7 +19,8 @@ public class MostraProduto extends JFrame{
 	
 	public String mostra(String IDP) {
 		
-		
+		Banco banco = new Banco();
+		banco.getDados(IDP);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1024, 768);
