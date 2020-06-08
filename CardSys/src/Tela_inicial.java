@@ -26,12 +26,12 @@ public class Tela_inicial extends JFrame {
 			loop = true;
 			while(loop==true){
 				Banco banco = new Banco();
-				String tipo = banco.bancoID(ID);
+				String tipo = banco.getTipo(ID);
 				if(tipo.contentEquals("cliente")) {
 					frameCliente.mostra(ID);
 					frameCliente.setVisible(true);
 					String IDP = ard.ler();
-					tipo = banco.bancoID(IDP);
+					tipo = banco.getTipo(IDP);
 					if(tipo.contentEquals("produto")) {
 						frameProduto.mostra(IDP);
 						frameProduto.setVisible(true);
