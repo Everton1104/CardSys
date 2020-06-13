@@ -16,7 +16,7 @@ public class Banco {
 
 		Connection conexao = DriverManager.getConnection(url, user, password);
 		
-		ArrayList<String> clinete = new ArrayList<String>();
+		ArrayList<String> cliente = new ArrayList<String>();
 		
 		
 		String sql = "";
