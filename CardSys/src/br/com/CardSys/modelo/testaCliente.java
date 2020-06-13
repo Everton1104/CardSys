@@ -10,12 +10,9 @@ public class testaCliente {
 		c.setNome("everton");
 		c.setTelefone("12345");
 		
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("cliente");
-		EntityManager manager = emf.createEntityManager();
-		
-		manager.getTransaction().begin();
-		manager.persist(c);
-		manager.getTransaction().commit();
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Cliente");
+		EntityManager em = emf.createEntityManager();
+		emf.close();
 		
 	}
 }
