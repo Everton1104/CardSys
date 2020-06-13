@@ -3,6 +3,7 @@ package br.com.CardSys;
 import java.awt.Color;
 import java.awt.Font;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,7 +44,7 @@ public class MontaTela extends JFrame {
 	public void cliente(String id)throws SQLException {
 		
 		Banco b = new Banco();
-		b.execute(id);
+		ArrayList<String> cliente = b.execute(id);
 		
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
