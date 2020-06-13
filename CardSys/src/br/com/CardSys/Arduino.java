@@ -1,4 +1,4 @@
-package br.com.CardSys.modelo;
+package br.com.CardSys;
 import java.io.InputStream;
 
 import com.fazecast.jSerialComm.SerialPort;
