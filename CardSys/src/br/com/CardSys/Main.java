@@ -8,8 +8,6 @@ public class Main {
 		tela.setVisible(true);
 		tela.cliente(ard.ler());
 		tela.setVisible(true);
-		
-
 	}
 
 }
