@@ -29,6 +29,9 @@ public class Banco {
 			cliente.add(res.getString("telefone"));
 			cliente.add(res.getString("numero"));
 		}
+		System.out.println(cliente.get(0));
+		System.out.println(cliente.get(1));
+		System.out.println(cliente.get(2));
 		return cliente;
 	}
 }
