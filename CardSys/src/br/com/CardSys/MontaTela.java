@@ -103,7 +103,6 @@ public class MontaTela extends JFrame {
 			lblNewLabel_1_1_1_1.setBounds(466, 225, 497, 86);
 			contentPane.add(lblNewLabel_1_1_1_1);
 			
-			
 			ScrollPane scrollPane = new ScrollPane();
 			scrollPane.setBounds(10, 317, 979, 389);
 			JList<String> list = new JList<>(new AbstractListModel<String>() {
