@@ -3,9 +3,9 @@ package br.com.CardSys;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Banco {
 	public ArrayList<String> execute(String id) throws SQLException {
@@ -19,14 +19,16 @@ public class Banco {
 		ArrayList<String> cliente = new ArrayList<String>();
 		
 		
-		String sql = "";
+		String sql = "SELECT clientes.nome, clientes.telefone, cartao.numero FROM clientes LEFT JOIN cartao ON clientes.id_cartao = cartao.id WHERE cartao.numero = "+id+";";
 		
 		PreparedStatement ps = conexao.prepareStatement(sql);
 		
-		ps.execute();
-		
-		
-		
+		ResultSet res = ps.executeQuery();
+		while(res.next()) {
+			cliente.add(res.getString("nome"));
+			cliente.add(res.getString("telefone"));
+			cliente.add(res.getString("numero"));
+		}
 		return cliente;
 	}
 }
