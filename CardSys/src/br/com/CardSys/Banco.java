@@ -19,15 +19,15 @@ public class Banco {
 		ArrayList<String> cliente = new ArrayList<String>();
 		
 		
-		String sql = "SELECT clientes.nome, clientes.telefone, cartao.numero FROM clientes LEFT JOIN cartao ON clientes.id_cartao = cartao.id WHERE cartao.numero = "+id+";";
+		String sql = "SELECT clientes.id, clientes.nome, clientes.telefone FROM cartao LEFT JOIN clientes  ON clientes.id = cartao.id_cliente WHERE cartao.numero = "+id+";";
 		
 		PreparedStatement ps = conexao.prepareStatement(sql);
 		
 		ResultSet res = ps.executeQuery();
 		while(res.next()) {
+			cliente.add(res.getString("id"));
 			cliente.add(res.getString("nome"));
 			cliente.add(res.getString("telefone"));
-			cliente.add(res.getString("numero"));
 		}
 		System.out.println(cliente.get(0));
 		System.out.println(cliente.get(1));
