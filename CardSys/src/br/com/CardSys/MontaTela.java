@@ -53,7 +53,6 @@ public class MontaTela extends JFrame {
 	public void cliente(String id)throws SQLException {
 		
 		Banco b = new Banco();
-		ArrayList<String> cliente = b.execute(id);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(200, 0, 1024, 768);
@@ -108,8 +107,9 @@ public class MontaTela extends JFrame {
 			JList<String> list = new JList<>(new AbstractListModel<String>() {
 				private static final long serialVersionUID = 1L;
 				String[] values = new String[] {
-						cliente.get(4)+" QTDE -> \""+cliente.get(5)+"\" Valor un -> \""+cliente.get(6)+"\" Total -> \"R$"+(Integer.parseInt(cliente.get(5)))*(Float.parseFloat(cliente.get(6)))+"\"", 
-						cliente.get(7)+" QTDE -> \""+cliente.get(8)+"\" Valor un -> \""+cliente.get(9)+"\" Total -> \"R$"+(Integer.parseInt(cliente.get(8)))*(Float.parseFloat(cliente.get(9)))+"\""
+						"",
+						"",
+						""
 						};
 				public int getSize() {
 					return values.length;

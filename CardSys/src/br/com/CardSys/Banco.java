@@ -8,55 +8,85 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Banco {
-	public ArrayList<String> execute(String id) throws SQLException {
+	public ArrayList<String> execute(String cartao_numero, String opc, String str1, String str2) throws SQLException {
 
 		String url = "jdbc:mysql://127.0.0.1/banco_cardsys";
 		String user = "root";
 		String password = "root";
 
 		Connection conexao = DriverManager.getConnection(url, user, password);
-		
-		ArrayList<String> cliente = new ArrayList<String>();
-		
-		
-		String sql = "SELECT clientes.id, clientes.nome, clientes.telefone, cartao.id AS id_cartao FROM cartao LEFT JOIN clientes  ON clientes.id = cartao.id_cliente WHERE cartao.numero = "+id+";";
-
-		
+		String sql = "SELECT id FROM cartao WHERE numero = "+cartao_numero+";";
 		PreparedStatement ps = conexao.prepareStatement(sql);
+		ResultSet res = ps.executeQuery();
+		String id = res.getString("id");
 		
+		switch (opc) {
+		case "add_nome": {
+			add_nome(id, conexao, str1, str2);
+			return null;
+		}
+		case "add_pedido": {
+			add_pedido(id, conexao, str1, str2);
+			return null;
+		}
+		case "consulta": {
+			return consulta(id, conexao);
+		}
+		case "limpar": {
+			limpar(id, conexao);
+			return null;
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + opc);
+		}
+	}
+
+	private void limpar(String id, Connection con)throws SQLException {
+		String sql = "UPDATE cartao SET nome = '0' WHERE id = "+id+";"+
+					"UPDATE cartao SET telefone = '0' WHERE id = "+id+";"+
+					"DELETE FROM controle WHERE id_cartao = "+id+";";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.executeQuery();
+	}
+
+	private ArrayList<String> consulta(String id, Connection con)throws SQLException {
+		String sql ="SELECT cartao.id AS id_cartao, produtos.nome_produto AS produto, controle.qtde, produtos.valor FROM controle"+ 
+					"LEFT JOIN cartao ON cartao.id = id_cartao"+
+					"LEFT JOIN produtos ON produtos.id = id_produto"+
+					"WHERE id_cartao = "+id+";";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ArrayList<String> consulta = new ArrayList<String>();
 		ResultSet res = ps.executeQuery();
 		while(res.next()) {
-			cliente.add(res.getString("id"));//id cliente
-			cliente.add(res.getString("nome"));
-			cliente.add(res.getString("telefone"));
-			cliente.add(res.getString("id_cartao"));
+			consulta.add(res.getString("produto"));
+			consulta.add(res.getString("qtde"));
+			consulta.add(res.getString("valor"));
 		}
-		
-		String sql2 = "SELECT produtos.nomeP, controle.qtde, produtos.valor FROM controle LEFT JOIN clientes ON clientes.id = controle.id_cliente LEFT JOIN produtos ON produtos.id = controle.id_produto WHERE clientes.id = "+cliente.get(0)+";";
-		
-		res = ps.executeQuery(sql2);
-		while(res.next()) {
-			cliente.add(res.getString("nomeP"));
-			cliente.add(res.getString("qtde"));
-			cliente.add(res.getString("valor"));
-		}
-		
-		for(int i = 0; i < cliente.size(); i++ ) {
-			System.out.println(cliente.get(i));
-		}
-		return cliente;
+		return consulta;
+	}
+
+	private void add_pedido(String id, Connection con, String produto, String qtde )throws SQLException {
+		String sql ="INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+id+", "+produto+", "+qtde+");";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.executeQuery();
+	}
+
+	private void add_nome(String id, Connection con, String nome, String telefone)throws SQLException {
+		String sql ="UPDATE cartao SET nome = "+nome+" WHERE id = "+id+";" + 
+					"UPDATE cartao SET telefone = "+telefone+" WHERE id = "+id+";";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.executeQuery();
 	}
 }
 
 
 /*
 
-
-
- *CRIACAO TABELA CARTAO*
- CREATE TABLE `cartao` (
+CREATE TABLE `cartao` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`numero` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`numero` VARCHAR(8) NULL DEFAULT '0' COLLATE 'utf8_general_ci',
+	`nome` VARCHAR(50) NULL DEFAULT 'sem_nome' COLLATE 'utf8_general_ci',
+	`telefone` VARCHAR(50) NULL DEFAULT 'sem_telefone' COLLATE 'utf8_general_ci',
 	PRIMARY KEY (`id`) USING BTREE
 )
 COLLATE='utf8_general_ci'
@@ -64,15 +94,28 @@ ENGINE=InnoDB
 AUTO_INCREMENT=6
 ;
 
-*CRIACAO TABELA CLIENTE*
-CREATE TABLE `clientes` (
+
+
+CREATE TABLE `controle` (
+	`qtde` INT(10) UNSIGNED NULL DEFAULT '0',
+	`id_cartao` INT(10) UNSIGNED NULL DEFAULT '0',
+	`id_produto` INT(10) UNSIGNED NULL DEFAULT '0',
+	INDEX `FK_controle_cartao` (`id_cartao`) USING BTREE,
+	INDEX `FK_controle_produtos` (`id_produto`) USING BTREE,
+	CONSTRAINT `FK_controle_cartao` FOREIGN KEY (`id_cartao`) REFERENCES `banco_cardsys`.`cartao` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT,
+	CONSTRAINT `FK_controle_produtos` FOREIGN KEY (`id_produto`) REFERENCES `banco_cardsys`.`produtos` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;
+
+
+
+CREATE TABLE `produtos` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`nome` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
-	`telefone` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
-	`id_cartao` INT(10) UNSIGNED NULL DEFAULT NULL,
-	PRIMARY KEY (`id`) USING BTREE,
-	INDEX `FK_clientes_cartao` (`id_cartao`) USING BTREE,
-	CONSTRAINT `FK_clientes_cartao` FOREIGN KEY (`id_cartao`) REFERENCES `banco_cardsys`.`cartao` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
+	`nome_produto` VARCHAR(50) NULL DEFAULT '0' COLLATE 'utf8_general_ci',
+	`valor` FLOAT(12) NULL DEFAULT '0',
+	PRIMARY KEY (`id`) USING BTREE
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
