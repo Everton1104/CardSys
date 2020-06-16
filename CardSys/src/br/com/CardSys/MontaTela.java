@@ -3,7 +3,8 @@ package br.com.CardSys;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.ScrollPane;
-import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -12,14 +13,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.ActionEvent;
 
 public class MontaTela extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -111,7 +110,7 @@ public class MontaTela extends JFrame {
 			scrollPane.setBounds(10, 317, 979, 389);
 			JList<String> list = new JList<>(new AbstractListModel<String>() {
 				private static final long serialVersionUID = 1L;
-				ArrayList<String> dados = b.execute(id, "consulta", "", "");
+				ArrayList<String> dados = b.execute(id, "consulta", "", "");//ARRUMAR ORDEM DAS CONSULTAS COM OUTROS ARRAYS.
 				public int getSize() {
 					return dados.size();
 				}
@@ -128,14 +127,13 @@ public class MontaTela extends JFrame {
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						b.execute(id, "limpar", "", "");
-						dispose();
+						if(JOptionPane.showConfirmDialog(null, "Pagar conta de "+cartao_numero.get(1)+"?", "Pagamento", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+							b.execute(id, "limpar", "", "");
+							dispose();
+						}
 					} catch (SQLException e1) {e1.printStackTrace();}
 				}
 			});
-			btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 30));
-			btnNewButton.setBounds(10, 234, 216, 61);
-			contentPane.add(btnNewButton);
 			
 		}else {
 			JLabel lblNewLabel_1_3 = new JLabel("Nome:");
