@@ -53,6 +53,7 @@ public class MontaTela extends JFrame {
 	public void cliente(String id)throws SQLException {
 		
 		Banco b = new Banco();
+		ArrayList<String> cartao_numero = b.execute(id, "cartao_numero", "0", "0");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(200, 0, 1024, 768);
@@ -67,7 +68,7 @@ public class MontaTela extends JFrame {
 		lblNewLabel_1.setBounds(50, 33, 389, 86);
 		contentPane.add(lblNewLabel_1);
 		
-		JLabel lblNewLabel_1_1 = new JLabel(cliente.get(3));
+		JLabel lblNewLabel_1_1 = new JLabel(cartao_numero.get(0));
 		lblNewLabel_1_1.setForeground(Color.ORANGE);
 		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
@@ -75,14 +76,14 @@ public class MontaTela extends JFrame {
 		contentPane.add(lblNewLabel_1_1);
 		
 		
-		if(cliente.get(0).contentEquals("0")==false) {
+		if(cartao_numero.get(1).contentEquals("0")==false) {
 			JLabel lblNewLabel_1_2 = new JLabel("Cliente:");
 			lblNewLabel_1_2.setHorizontalAlignment(SwingConstants.CENTER);
 			lblNewLabel_1_2.setFont(new Font("Tahoma", Font.PLAIN, 50));
 			lblNewLabel_1_2.setBounds(60, 129, 389, 86);
 			contentPane.add(lblNewLabel_1_2);
 		
-			JLabel lblNewLabel_1_1_1 = new JLabel(cliente.get(1));
+			JLabel lblNewLabel_1_1_1 = new JLabel(cartao_numero.get(1));
 			lblNewLabel_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
 			lblNewLabel_1_1_1.setForeground(Color.ORANGE);
 			lblNewLabel_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
@@ -95,7 +96,7 @@ public class MontaTela extends JFrame {
 			lblNewLabel_1_2_1.setBounds(50, 225, 389, 86);
 			contentPane.add(lblNewLabel_1_2_1);
 			
-			JLabel lblNewLabel_1_1_1_1 = new JLabel(cliente.get(2));
+			JLabel lblNewLabel_1_1_1_1 = new JLabel(cartao_numero.get(2));
 			lblNewLabel_1_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
 			lblNewLabel_1_1_1_1.setForeground(Color.ORANGE);
 			lblNewLabel_1_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
@@ -156,7 +157,12 @@ public class MontaTela extends JFrame {
 			btnOK.setFont(new Font("Tahoma", Font.PLAIN, 60));
 			btnOK.setBounds(353, 500, 270, 130);
 			contentPane.add(btnOK);
-			btnOK.addActionListener(event -> System.out.println(nome.getText()));
+			btnOK.addActionListener(event -> {
+				try {
+					b.execute(id, "add_nome", nome.getText()+"", telefone.getText()+"");
+				} catch (SQLException e) {e.printStackTrace();}
+			});
+			
 		}
 	}
 }

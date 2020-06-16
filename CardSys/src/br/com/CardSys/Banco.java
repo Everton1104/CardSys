@@ -18,6 +18,7 @@ public class Banco {
 		String sql = "SELECT id FROM cartao WHERE numero = "+cartao_numero+";";
 		PreparedStatement ps = conexao.prepareStatement(sql);
 		ResultSet res = ps.executeQuery();
+		res.next();
 		String id = res.getString("id");
 		
 		switch (opc) {
@@ -29,23 +30,43 @@ public class Banco {
 			add_pedido(id, conexao, str1, str2);
 			return null;
 		}
-		case "consulta": {
+		case "consulta": {//reotorna get(0)=produto, get(1)=qtde, get(2)=valor, get(n)=n
 			return consulta(id, conexao);
 		}
 		case "limpar": {
 			limpar(id, conexao);
 			return null;
 		}
+		case "cartao_numero": {//reotorna get(0)=id, get(1)=nome, get(2)=telefone
+			return consulta_cartao(cartao_numero, conexao);
+		}
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + opc);
+			throw new IllegalArgumentException("Valor inesperado: " + opc);
 		}
 	}
 
-	private void limpar(String id, Connection con)throws SQLException {
-		String sql = "UPDATE cartao SET nome = '0' WHERE id = "+id+";"+
-					"UPDATE cartao SET telefone = '0' WHERE id = "+id+";"+
-					"DELETE FROM controle WHERE id_cartao = "+id+";";
+	private ArrayList<String> consulta_cartao(String cartao_numero, Connection con)throws SQLException {
+		String sql = "SELECT id, nome, telefone FROM cartao WHERE numero = "+cartao_numero+";";
 		PreparedStatement ps = con.prepareStatement(sql);
+		ArrayList<String> consulta_cartao = new ArrayList<String>();
+		ResultSet res = ps.executeQuery();
+		while(res.next()) {
+			consulta_cartao.add(res.getString("id"));
+			consulta_cartao.add(res.getString("nome"));
+			consulta_cartao.add(res.getString("telefone"));
+		}
+		return consulta_cartao;
+	}
+
+	private void limpar(String id, Connection con)throws SQLException {
+		String sql = "UPDATE cartao SET nome = '0' WHERE id = "+id+";";
+		String sql2 ="UPDATE cartao SET telefone = '0' WHERE id = "+id+";";
+		String sql3 ="DELETE FROM controle WHERE id_cartao = "+id+";";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.executeQuery();
+		ps = con.prepareStatement(sql2);
+		ps.executeQuery();
+		ps = con.prepareStatement(sql3);
 		ps.executeQuery();
 	}
 
@@ -72,9 +93,11 @@ public class Banco {
 	}
 
 	private void add_nome(String id, Connection con, String nome, String telefone)throws SQLException {
-		String sql ="UPDATE cartao SET nome = "+nome+" WHERE id = "+id+";" + 
-					"UPDATE cartao SET telefone = "+telefone+" WHERE id = "+id+";";
+		String sql ="UPDATE cartao SET nome = '"+nome+"' WHERE id = "+id+";"; 
+		String sql2 ="UPDATE cartao SET telefone = '"+telefone+"' WHERE id = "+id+";";
 		PreparedStatement ps = con.prepareStatement(sql);
+		ps.executeQuery();
+		ps = con.prepareStatement(sql2);
 		ps.executeQuery();
 	}
 }
