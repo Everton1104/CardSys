@@ -9,5 +9,4 @@ public class Main {
 		tela.cliente(ard.ler());
 		tela.setVisible(true);
 	}
-
 }

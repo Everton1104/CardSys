@@ -16,6 +16,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MontaTela extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -63,44 +65,44 @@ public class MontaTela extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel lblNewLabel_1 = new JLabel("Cart\u00E3o numero:");
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
-		lblNewLabel_1.setBounds(50, 33, 389, 86);
+		lblNewLabel_1.setBounds(10, 10, 389, 86);
 		contentPane.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_1_1 = new JLabel(cartao_numero.get(0));
 		lblNewLabel_1_1.setForeground(Color.ORANGE);
-		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
-		lblNewLabel_1_1.setBounds(466, 33, 497, 86);
+		lblNewLabel_1_1.setBounds(391, 10, 497, 86);
 		contentPane.add(lblNewLabel_1_1);
 		
 		
 		if(cartao_numero.get(1).contentEquals("0")==false) {
 			JLabel lblNewLabel_1_2 = new JLabel("Cliente:");
-			lblNewLabel_1_2.setHorizontalAlignment(SwingConstants.CENTER);
+			lblNewLabel_1_2.setHorizontalAlignment(SwingConstants.LEFT);
 			lblNewLabel_1_2.setFont(new Font("Tahoma", Font.PLAIN, 50));
-			lblNewLabel_1_2.setBounds(60, 129, 389, 86);
+			lblNewLabel_1_2.setBounds(10, 81, 389, 86);
 			contentPane.add(lblNewLabel_1_2);
 		
 			JLabel lblNewLabel_1_1_1 = new JLabel(cartao_numero.get(1));
-			lblNewLabel_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+			lblNewLabel_1_1_1.setHorizontalAlignment(SwingConstants.LEFT);
 			lblNewLabel_1_1_1.setForeground(Color.ORANGE);
 			lblNewLabel_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
-			lblNewLabel_1_1_1.setBounds(466, 129, 497, 86);
+			lblNewLabel_1_1_1.setBounds(391, 81, 497, 86);
 			contentPane.add(lblNewLabel_1_1_1);
 			
 			JLabel lblNewLabel_1_2_1 = new JLabel("Telefone:");
-			lblNewLabel_1_2_1.setHorizontalAlignment(SwingConstants.CENTER);
+			lblNewLabel_1_2_1.setHorizontalAlignment(SwingConstants.LEFT);
 			lblNewLabel_1_2_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
-			lblNewLabel_1_2_1.setBounds(50, 225, 389, 86);
+			lblNewLabel_1_2_1.setBounds(10, 154, 389, 86);
 			contentPane.add(lblNewLabel_1_2_1);
 			
 			JLabel lblNewLabel_1_1_1_1 = new JLabel(cartao_numero.get(2));
-			lblNewLabel_1_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+			lblNewLabel_1_1_1_1.setHorizontalAlignment(SwingConstants.LEFT);
 			lblNewLabel_1_1_1_1.setForeground(Color.ORANGE);
 			lblNewLabel_1_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
-			lblNewLabel_1_1_1_1.setBounds(466, 225, 497, 86);
+			lblNewLabel_1_1_1_1.setBounds(391, 154, 497, 86);
 			contentPane.add(lblNewLabel_1_1_1_1);
 			
 			ScrollPane scrollPane = new ScrollPane();
@@ -124,6 +126,19 @@ public class MontaTela extends JFrame {
 			scrollPane.add(list);
 			contentPane.add(scrollPane);
 			
+			JButton btnNewButton = new JButton("PAGAR");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						b.execute(id, "limpar", "", "");
+						System.exit(HIDE_ON_CLOSE);
+					} catch (SQLException e1) {e1.printStackTrace();}
+				}
+			});
+			btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 30));
+			btnNewButton.setBounds(10, 234, 216, 61);
+			contentPane.add(btnNewButton);
+			
 		}else {
 			JLabel lblNewLabel_1_3 = new JLabel("Nome:");
 			lblNewLabel_1_3.setHorizontalAlignment(SwingConstants.CENTER);
@@ -143,7 +158,13 @@ public class MontaTela extends JFrame {
 			nome.setBounds(474, 210, 489, 86);
 			contentPane.add(nome);
 			nome.setColumns(10);
-			//nome.addActionListener(event -> System.out.println(nome.getText()));
+			nome.addActionListener(event -> {
+			try {
+				b.execute(id, "add_nome", nome.getText()+"", "");
+				System.exit(HIDE_ON_CLOSE);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}});
 			
 			telefone = new JTextField();
 			telefone.setHorizontalAlignment(SwingConstants.LEFT);
@@ -151,7 +172,13 @@ public class MontaTela extends JFrame {
 			telefone.setColumns(10);
 			telefone.setBounds(474, 370, 489, 86);
 			contentPane.add(telefone);
-			//telefone.addActionListener(event -> System.out.println(telefone.getText()));
+			telefone.addActionListener(event -> {
+			try {
+				b.execute(id, "add_nome", nome.getText()+"",telefone.getText()+"");
+				System.exit(HIDE_ON_CLOSE);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}});
 
 			JButton btnOK = new JButton("OK");
 			btnOK.setFont(new Font("Tahoma", Font.PLAIN, 60));
@@ -160,6 +187,7 @@ public class MontaTela extends JFrame {
 			btnOK.addActionListener(event -> {
 				try {
 					b.execute(id, "add_nome", nome.getText()+"", telefone.getText()+"");
+					System.exit(HIDE_ON_CLOSE);
 				} catch (SQLException e) {e.printStackTrace();}
 			});
 			
