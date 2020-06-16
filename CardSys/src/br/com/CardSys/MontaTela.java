@@ -3,6 +3,7 @@ package br.com.CardSys;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.ScrollPane;
+import java.awt.Window;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -17,6 +18,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 public class MontaTela extends JFrame {
@@ -57,7 +59,7 @@ public class MontaTela extends JFrame {
 		Banco b = new Banco();
 		ArrayList<String> cartao_numero = b.execute(id, "cartao_numero", "0", "0");
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(200, 0, 1024, 768);
 		contentPane = new JPanel();
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -109,16 +111,12 @@ public class MontaTela extends JFrame {
 			scrollPane.setBounds(10, 317, 979, 389);
 			JList<String> list = new JList<>(new AbstractListModel<String>() {
 				private static final long serialVersionUID = 1L;
-				String[] values = new String[] {
-						"",
-						"",
-						""
-						};
+				ArrayList<String> dados = b.execute(id, "consulta", "", "");
 				public int getSize() {
-					return values.length;
+					return dados.size();
 				}
 				public String getElementAt(int index) {
-					return values[index];
+					return dados.get(index);
 				}
 			});
 			list.setFont(new Font("Tahoma", Font.PLAIN, 30));
@@ -131,7 +129,7 @@ public class MontaTela extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						b.execute(id, "limpar", "", "");
-						System.exit(HIDE_ON_CLOSE);
+						dispose();
 					} catch (SQLException e1) {e1.printStackTrace();}
 				}
 			});
@@ -161,7 +159,9 @@ public class MontaTela extends JFrame {
 			nome.addActionListener(event -> {
 			try {
 				b.execute(id, "add_nome", nome.getText()+"", "");
-				System.exit(HIDE_ON_CLOSE);
+				dispose();
+				this.cliente(id);
+				this.setVisible(true);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}});
@@ -175,7 +175,9 @@ public class MontaTela extends JFrame {
 			telefone.addActionListener(event -> {
 			try {
 				b.execute(id, "add_nome", nome.getText()+"",telefone.getText()+"");
-				System.exit(HIDE_ON_CLOSE);
+				dispose();
+				this.cliente(id);
+				this.setVisible(true);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}});
@@ -187,7 +189,9 @@ public class MontaTela extends JFrame {
 			btnOK.addActionListener(event -> {
 				try {
 					b.execute(id, "add_nome", nome.getText()+"", telefone.getText()+"");
-					System.exit(HIDE_ON_CLOSE);
+					dispose();
+					this.cliente(id);
+					this.setVisible(true);
 				} catch (SQLException e) {e.printStackTrace();}
 			});
 			

@@ -71,9 +71,9 @@ public class Banco {
 	}
 
 	private ArrayList<String> consulta(String id, Connection con)throws SQLException {
-		String sql ="SELECT cartao.id AS id_cartao, produtos.nome_produto AS produto, controle.qtde, produtos.valor FROM controle"+ 
-					"LEFT JOIN cartao ON cartao.id = id_cartao"+
-					"LEFT JOIN produtos ON produtos.id = id_produto"+
+		String sql ="SELECT cartao.id AS id_cartao, produtos.nome_produto AS produto, controle.qtde, produtos.valor FROM controle "+ 
+					"LEFT JOIN cartao ON cartao.id = id_cartao "+
+					"LEFT JOIN produtos ON produtos.id = id_produto "+
 					"WHERE id_cartao = "+id+";";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ArrayList<String> consulta = new ArrayList<String>();
