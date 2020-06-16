@@ -19,19 +19,31 @@ public class Banco {
 		ArrayList<String> cliente = new ArrayList<String>();
 		
 		
-		String sql = "SELECT clientes.id, clientes.nome, clientes.telefone FROM cartao LEFT JOIN clientes  ON clientes.id = cartao.id_cliente WHERE cartao.numero = "+id+";";
+		String sql = "SELECT clientes.id, clientes.nome, clientes.telefone, cartao.id AS id_cartao FROM cartao LEFT JOIN clientes  ON clientes.id = cartao.id_cliente WHERE cartao.numero = "+id+";";
+
 		
 		PreparedStatement ps = conexao.prepareStatement(sql);
 		
 		ResultSet res = ps.executeQuery();
 		while(res.next()) {
-			cliente.add(res.getString("id"));
+			cliente.add(res.getString("id"));//id cliente
 			cliente.add(res.getString("nome"));
 			cliente.add(res.getString("telefone"));
+			cliente.add(res.getString("id_cartao"));
 		}
-		System.out.println(cliente.get(0));
-		System.out.println(cliente.get(1));
-		System.out.println(cliente.get(2));
+		
+		String sql2 = "SELECT produtos.nomeP, controle.qtde, produtos.valor FROM controle LEFT JOIN clientes ON clientes.id = controle.id_cliente LEFT JOIN produtos ON produtos.id = controle.id_produto WHERE clientes.id = "+cliente.get(0)+";";
+		
+		res = ps.executeQuery(sql2);
+		while(res.next()) {
+			cliente.add(res.getString("nomeP"));
+			cliente.add(res.getString("qtde"));
+			cliente.add(res.getString("valor"));
+		}
+		
+		for(int i = 0; i < cliente.size(); i++ ) {
+			System.out.println(cliente.get(i));
+		}
 		return cliente;
 	}
 }

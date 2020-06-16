@@ -68,7 +68,7 @@ public class MontaTela extends JFrame {
 		lblNewLabel_1.setBounds(50, 33, 389, 86);
 		contentPane.add(lblNewLabel_1);
 		
-		JLabel lblNewLabel_1_1 = new JLabel(id);
+		JLabel lblNewLabel_1_1 = new JLabel(cliente.get(3));
 		lblNewLabel_1_1.setForeground(Color.ORANGE);
 		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
@@ -83,7 +83,7 @@ public class MontaTela extends JFrame {
 			lblNewLabel_1_2.setBounds(60, 129, 389, 86);
 			contentPane.add(lblNewLabel_1_2);
 		
-			JLabel lblNewLabel_1_1_1 = new JLabel(cliente.get(0));
+			JLabel lblNewLabel_1_1_1 = new JLabel(cliente.get(1));
 			lblNewLabel_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
 			lblNewLabel_1_1_1.setForeground(Color.ORANGE);
 			lblNewLabel_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
@@ -96,7 +96,7 @@ public class MontaTela extends JFrame {
 			lblNewLabel_1_2_1.setBounds(50, 225, 389, 86);
 			contentPane.add(lblNewLabel_1_2_1);
 			
-			JLabel lblNewLabel_1_1_1_1 = new JLabel(cliente.get(1));
+			JLabel lblNewLabel_1_1_1_1 = new JLabel(cliente.get(2));
 			lblNewLabel_1_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
 			lblNewLabel_1_1_1_1.setForeground(Color.ORANGE);
 			lblNewLabel_1_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
@@ -108,8 +108,9 @@ public class MontaTela extends JFrame {
 			JList<String> list = new JList<>(new AbstractListModel<String>() {
 				private static final long serialVersionUID = 1L;
 				String[] values = new String[] {
-						"teste", 
-						"teste"};
+						cliente.get(4)+" QTDE -> \""+cliente.get(5)+"\" Valor un -> \""+cliente.get(6)+"\" Total -> \"R$"+(Integer.parseInt(cliente.get(5)))*(Float.parseFloat(cliente.get(6)))+"\"", 
+						cliente.get(7)+" QTDE -> \""+cliente.get(8)+"\" Valor un -> \""+cliente.get(9)+"\" Total -> \"R$"+(Integer.parseInt(cliente.get(8)))*(Float.parseFloat(cliente.get(9)))+"\""
+						};
 				public int getSize() {
 					return values.length;
 				}
