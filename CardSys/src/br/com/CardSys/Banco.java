@@ -18,9 +18,13 @@ public class Banco {
 		String sql = "SELECT id FROM cartao WHERE numero = "+cartao_numero+";";
 		PreparedStatement ps = conexao.prepareStatement(sql);
 		ResultSet res = ps.executeQuery();
-		res.next();
-		String id = res.getString("id");
-		
+		String id = "";
+		if(res.next()) {
+			id = res.getString("id");
+		}else {
+			cadastro_cartao(cartao_numero, conexao);
+		}
+			
 		switch (opc) {
 		case "add_nome": {
 			add_nome(id, conexao, str1, str2);//str1=nome str2=telefone
@@ -44,7 +48,13 @@ public class Banco {
 			throw new IllegalArgumentException("Valor inesperado: " + opc);
 		}
 	}
-
+	
+	private void cadastro_cartao(String cartao_numero, Connection con)throws SQLException {
+		String sql = "INSERT INTO cartao (numero) VALUES ("+cartao_numero+");";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.execute();
+		this.execute(cartao_numero, "cartao_numero", "", "");
+	}
 	private ArrayList<String> consulta_cartao(String cartao_numero, Connection con)throws SQLException {
 		String sql = "SELECT id, nome, telefone FROM cartao WHERE numero = "+cartao_numero+";";
 		PreparedStatement ps = con.prepareStatement(sql);
