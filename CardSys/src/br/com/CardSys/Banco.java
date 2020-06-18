@@ -34,14 +34,14 @@ public class Banco {
 			add_pedido(id, conexao, str1, str2);//str1=produto str2=qtde.
 			return null;
 		}
-		case "consulta": {//reotorna get(0)=produto, get(1)=qtde, get(2)=valor, get(n)=n
+		case "consulta": {//reotorna get(0)=produto, get(1)=qtde, get(2)=valor, get(n)=n.
 			return consulta(id, conexao);
 		}
 		case "limpar": {
 			limpar(id, conexao);
 			return null;
 		}
-		case "cartao_numero": {//reotorna get(0)=id, get(1)=nome, get(2)=telefone
+		case "cartao_numero": {//reotorna get(0)=id, get(1)=nome, get(2)=telefone.
 			return consulta_cartao(cartao_numero, conexao);
 		}
 		default:
