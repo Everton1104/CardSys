@@ -23,11 +23,11 @@ public class Banco {
 		
 		switch (opc) {
 		case "add_nome": {
-			add_nome(id, conexao, str1, str2);
+			add_nome(id, conexao, str1, str2);//str1=nome str2=telefone
 			return null;
 		}
 		case "add_pedido": {
-			add_pedido(id, conexao, str1, str2);
+			add_pedido(id, conexao, str1, str2);//str1=produto str2=qtde
 			return null;
 		}
 		case "consulta": {//reotorna get(0)=produto, get(1)=qtde, get(2)=valor, get(n)=n

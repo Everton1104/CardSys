@@ -8,7 +8,7 @@ public class Arduino {
 	public String ler(){
 		try {
 			SerialPort comPort = SerialPort.getCommPorts()[0];
-			comPort.setBaudRate(115200);
+			comPort.setBaudRate(9600);
 			comPort.openPort();
 			comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
 			InputStream in = comPort.getInputStream();

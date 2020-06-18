@@ -28,7 +28,7 @@ public class MontaTela extends JFrame {
 	
 	public MontaTela() throws Exception{
 		inicio();
-		//cliente("92518414");
+		//cliente("2612014");
 	}
 	
 
@@ -56,7 +56,7 @@ public class MontaTela extends JFrame {
 	public void cliente(String id)throws SQLException {
 		
 		Banco b = new Banco();
-		ArrayList<String> cartao_numero = b.execute(id, "cartao_numero", "0", "0");
+		ArrayList<String> cartao_numero = b.execute(id, "cartao_numero", "", "");
 		
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(200, 0, 1024, 768);
@@ -134,6 +134,11 @@ public class MontaTela extends JFrame {
 					} catch (SQLException e1) {e1.printStackTrace();}
 				}
 			});
+			btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 30));
+			btnNewButton.setBounds(10, 234, 216, 61);
+			contentPane.add(btnNewButton);
+
+			
 			
 		}else {
 			JLabel lblNewLabel_1_3 = new JLabel("Nome:");
