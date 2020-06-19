@@ -97,7 +97,7 @@ public class Banco {
 	}
 
 	private void add_pedido(String id, Connection con, String produto, String qtde )throws SQLException {
-		String sql ="INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+id+", "+produto+", "+qtde+");";
+		String sql ="INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+id+", "+Integer.parseInt(produto)+", "+Integer.parseInt(qtde)+");";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.executeQuery();
 	}

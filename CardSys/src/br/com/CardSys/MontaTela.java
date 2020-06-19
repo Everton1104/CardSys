@@ -5,10 +5,11 @@ import java.awt.Font;
 import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.swing.AbstractListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -52,6 +53,8 @@ public class MontaTela extends JFrame {
 		lblNewLabel_1.setBounds(271, 267, 419, 130);
 		contentPane.add(lblNewLabel_1);
 		
+		
+	
 	}
 	public void cliente(String id)throws SQLException {
 		
@@ -108,20 +111,76 @@ public class MontaTela extends JFrame {
 			
 			ScrollPane scrollPane = new ScrollPane();
 			scrollPane.setBounds(10, 317, 979, 389);
-			JList<String> list = new JList<>(new AbstractListModel<String>() {
-				private static final long serialVersionUID = 1L;
-				ArrayList<String> dados = b.execute(id, "consulta", "", "");//ARRUMAR ORDEM DAS CONSULTAS COM OUTROS ARRAYS.
-				public int getSize() {
-					return dados.size();
-				}
-				public String getElementAt(int index) {
-					return dados.get(index);
+			
+			ArrayList<String> dados = b.execute(id, "consulta", "", "");
+			String[] data = new String[dados.size()];
+			for (int i = 0; i < dados.size(); i++) {
+				data[i] = dados.get(i);
+			}
+			 JList<String> myList = new JList<String>(data);
+			 myList.setFont(new Font("Tahoma", Font.PLAIN, 30));
+			 myList.setBounds(10, 321, 979, 385);
+			 scrollPane.add(myList);
+			 contentPane.add(scrollPane);
+			
+//			ScrollPane scrollPane = new ScrollPane();
+//			scrollPane.setBounds(10, 317, 979, 389);
+//			JList<String> list = new JList<>(new AbstractListModel<String>() {
+//				private static final long serialVersionUID = 1L;
+//				ArrayList<String> dados = b.execute(id, "consulta", "", "");
+//				public int getSize() {
+//					return dados.size();
+//				}
+//				public String getElementAt(int index) {
+//					return dados.get(index);
+//				}
+//			});
+//			list.setFont(new Font("Tahoma", Font.PLAIN, 30));
+//			list.setBounds(10, 321, 979, 385);
+//			scrollPane.add(list);
+//			contentPane.add(scrollPane);
+			
+			JButton btnAdd = new JButton("ADICIONAR PRODUTO");
+			btnAdd.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						String produto = "";
+						while(!produto.contentEquals("")) {
+							produto = JOptionPane.showInputDialog(null, "produto", "Produto", JOptionPane.INFORMATION_MESSAGE);
+						}
+						String qtde = "";
+						while(!qtde.contentEquals("")) {
+							qtde = JOptionPane.showInputDialog(null, "QTDE", "QTDE", JOptionPane.INFORMATION_MESSAGE);
+						}
+						telaProduto(id, produto, qtde);
+					}catch (Exception err) {System.out.println("erro add produto.");err.printStackTrace();}
 				}
 			});
-			list.setFont(new Font("Tahoma", Font.PLAIN, 30));
-			list.setBounds(10, 321, 979, 385);
-			scrollPane.add(list);
-			contentPane.add(scrollPane);
+			btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 25));
+			btnAdd.setBounds(20, 234, 332, 61);
+			contentPane.add(btnAdd);
+			btnAdd.requestFocus();
+			btnAdd.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					int keyCode = e.getKeyCode();
+					if(keyCode == KeyEvent.VK_ENTER) {
+						try {
+							String produto = "";
+							while(produto.contentEquals("")) {
+								produto = JOptionPane.showInputDialog(null, "produto", "Produto", JOptionPane.INFORMATION_MESSAGE);
+								System.out.println(produto);
+							}
+							String qtde = "";
+							while(qtde.contentEquals("")) {
+								qtde = JOptionPane.showInputDialog(null, "QTDE", "QTDE", JOptionPane.INFORMATION_MESSAGE);
+								System.out.println(qtde);
+							}
+							telaProduto(id, produto, qtde);
+						}catch (Exception err) {System.out.println("erro add produto.");err.printStackTrace();}
+					}
+				}});
+			
 			
 			JButton btnNewButton = new JButton("PAGAR");
 			btnNewButton.addActionListener(new ActionListener() {
@@ -135,9 +194,9 @@ public class MontaTela extends JFrame {
 				}
 			});
 			btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 30));
-			btnNewButton.setBounds(10, 234, 216, 61);
+			btnNewButton.setBounds(374, 232, 216, 61);
 			contentPane.add(btnNewButton);
-
+			
 			
 			
 		}else {
@@ -199,5 +258,12 @@ public class MontaTela extends JFrame {
 			});
 			
 		}
+	}
+
+
+	protected void telaProduto(String id, String produto, String qtde) throws SQLException{
+		Banco b = new Banco();
+		b.execute(id, "add_pedido", produto, qtde);
+		
 	}
 }
