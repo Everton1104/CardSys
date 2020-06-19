@@ -18,7 +18,18 @@
 		</plugins>
 	</build>
 	<dependencies>
+
 		<dependency>
+<<<<<<< HEAD
+=======
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-agroal</artifactId>
+			<version>5.4.17.Final</version>
+			<type>pom</type>
+		</dependency>
+
+		<dependency>
+>>>>>>> refs/remotes/origin/master
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.20</version>
