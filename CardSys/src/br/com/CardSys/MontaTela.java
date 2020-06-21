@@ -274,22 +274,26 @@ public class MontaTela extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				int k =e.getKeyCode();
-				String letra = txtTeste.getText()+ e.getKeyChar();
 				ArrayList<String> res = new ArrayList<>();
-				if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE &&k!=KeyEvent.VK_ENTER&& txtTeste.getText() != "") {
+				String letra = txtTeste.getText()+ e.getKeyChar();
+				if(!letra.isBlank()||!letra.isEmpty() && k!=KeyEvent.VK_ENTER) {
 					try {
 						res = b.execute(id, "parcial", letra, "");
-					} catch (Exception err) {System.out.println("erro Banco!");}
-					txtBusca.setText(res.get(2)+res.get(0)+" | Valor -> R$"+Float.parseFloat(res.get(1))+"0");
+					} catch (SQLException e1) {System.out.println("Erro banco parcial.");}
 				}
-				else if(k == KeyEvent.VK_ENTER) {
-					try {
-						String qtde = JOptionPane.showInputDialog(null, "Quantas unidades de "+res.get(0)+"?", "QUANTIDADE", JOptionPane.OK_CANCEL_OPTION);//erro por falta de dados
-						b.execute(id, "add_pedido", res.get(2), qtde);
-						dispose();
-						cliente(id);
-					} catch (SQLException e1) {System.out.println("Erro na qtde!");e1.printStackTrace();}
-				}
+				if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE) {
+					if(k == KeyEvent.VK_ENTER) {
+						try {
+							letra = txtTeste.getText();
+							res = b.execute(id, "parcial", letra, "");
+							String qtde = JOptionPane.showInputDialog(null, "Quantas unidades de "+res.get(0)+"?", "Quantidade", JOptionPane.QUESTION_MESSAGE);
+							b.execute(id, "add_pedido", res.get(2), qtde);
+							dispose();
+						} catch (SQLException eQtde) {System.out.println("Erro na qtde!");eQtde.printStackTrace();}
+					}else {
+						txtBusca.setText(res.get(2)+res.get(0)+" | Valor -> R$"+Float.parseFloat(res.get(1))+"0");
+					}
+				}//resolver volta para tela do cliente
 			}});
 		
 		

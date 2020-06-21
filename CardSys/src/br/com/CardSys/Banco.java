@@ -45,14 +45,14 @@ public class Banco {
 			return consulta_cartao(cartao_numero, conexao);
 		}
 		case "parcial": {
-			return parcial(id, str1, conexao);
+			return parcial(str1, conexao);
 		}
 		default:
 			throw new IllegalArgumentException("Valor inesperado: " + opc);
 		}
 	}
 	
-	private ArrayList<String> parcial(String id, String str1, Connection con)throws SQLException {
+	private ArrayList<String> parcial(String str1, Connection con)throws SQLException {
 		String sql ="SELECT * FROM produtos WHERE nome_produto like '"+str1+"%';";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ArrayList<String> busca = new ArrayList<String>();
@@ -61,7 +61,7 @@ public class Banco {
 		busca.add(res.getString("nome_produto"));
 		busca.add(res.getString("valor"));
 		busca.add(res.getString("id"));
-		System.out.println("Banco -> "+busca.get(0)+" -> "+busca.get(1)+" -> "+busca.get(2));
+		System.out.println("Banco parcial -> "+busca.get(0)+" -> "+busca.get(1)+" -> "+busca.get(2));
 		return busca;
 		
 	}
