@@ -44,11 +44,28 @@ public class Banco {
 		case "cartao_numero": {//reotorna get(0)=id, get(1)=nome, get(2)=telefone.
 			return consulta_cartao(cartao_numero, conexao);
 		}
+		case "parcial": {
+			return parcial(id, str1, conexao);
+		}
 		default:
 			throw new IllegalArgumentException("Valor inesperado: " + opc);
 		}
 	}
 	
+	private ArrayList<String> parcial(String id, String str1, Connection con)throws SQLException {
+		String sql ="SELECT * FROM produtos WHERE nome_produto like '"+str1+"%';";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ArrayList<String> busca = new ArrayList<String>();
+		ResultSet res = ps.executeQuery();
+		res.next();
+		busca.add(res.getString("nome_produto"));
+		busca.add(res.getString("valor"));
+		busca.add(res.getString("id"));
+		System.out.println("Banco -> "+busca.get(0)+" -> "+busca.get(1)+" -> "+busca.get(2));
+		return busca;
+		
+	}
+
 	private void cadastro_cartao(String cartao_numero, Connection con)throws SQLException {
 		String sql = "INSERT INTO cartao (numero) VALUES ("+cartao_numero+");";
 		PreparedStatement ps = con.prepareStatement(sql);
@@ -80,7 +97,8 @@ public class Banco {
 		ps.executeQuery();
 	}
 
-	private ArrayList<String> consulta(String id, Connection con)throws SQLException {
+	private ArrayList<String> consulta(String id,Connection con)throws SQLException {
+		
 		String sql ="SELECT cartao.id AS id_cartao, produtos.nome_produto AS produto, controle.qtde, produtos.valor FROM controle "+ 
 					"LEFT JOIN cartao ON cartao.id = id_cartao "+
 					"LEFT JOIN produtos ON produtos.id = id_produto "+
@@ -89,15 +107,14 @@ public class Banco {
 		ArrayList<String> consulta = new ArrayList<String>();
 		ResultSet res = ps.executeQuery();
 		while(res.next()) {
-			consulta.add(res.getString("produto"));
-			consulta.add(res.getString("qtde"));
-			consulta.add(res.getString("valor"));
+			consulta.add(res.getString("produto")+" X "+res.getString("qtde")+" = R$"+(Float.parseFloat(res.getString("valor"))*(Float.parseFloat(res.getString("qtde")))));
+			System.out.println("consulta banco -> "+consulta.get(res.getRow()-1));
 		}
 		return consulta;
 	}
 
 	private void add_pedido(String id, Connection con, String produto, String qtde )throws SQLException {
-		String sql ="INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+id+", "+Integer.parseInt(produto)+", "+Integer.parseInt(qtde)+");";
+		String sql ="INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+id+", "+produto+", "+qtde+");";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.executeQuery();
 	}
@@ -113,7 +130,8 @@ public class Banco {
 }
 
 
-/*
+/*	
+select * from usuarios where nomes like '%pedro%'
 
 CREATE TABLE `cartao` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
