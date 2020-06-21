@@ -3,7 +3,6 @@ package br.com.CardSys;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.ScrollPane;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -158,7 +157,7 @@ public class MontaTela extends JFrame {
 			btnNewButton.setBounds(362, 232, 295, 59);
 			contentPane.add(btnNewButton);
 			
-			JButton btnEditar = new JButton("APAGAR ITEM");
+			JButton btnEditar = new JButton("EDITAR QTDE");
 			btnEditar.setEnabled(false);
 			btnEditar.setFont(new Font("Tahoma", Font.PLAIN, 30));
 			btnEditar.setBounds(667, 232, 295, 59);
@@ -186,9 +185,10 @@ public class MontaTela extends JFrame {
 					btnEditar.setEnabled(true);
 					btnEditar.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							String item = list.getSelectedValue();
 							try {
-								b.execute(id, "apagar_item", item, "");
+								String[] nomeProduto = list.getSelectedValue().split("X");
+								String qtde = JOptionPane.showInputDialog(null, "Digite a nova quantidade de "+nomeProduto[0].trim()+"?", "Quantidade", JOptionPane.QUESTION_MESSAGE);
+								b.execute(id, "alterar_item", nomeProduto[0].trim(), qtde);
 								dispose();
 								cliente(id);
 								

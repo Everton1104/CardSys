@@ -47,8 +47,8 @@ public class Banco {
 		case "parcial": {
 			return parcial(str1, conexao);
 		}
-		case "apagar_item": {
-			apagar_item(id, conexao, str1, str2);
+		case "alterar_item": {
+			alterar_item(id, conexao, str1, str2);
 			return null;
 		}
 		default:
@@ -56,11 +56,9 @@ public class Banco {
 		}
 	}
 
-	private void apagar_item(String id, Connection con, String str1, String str2)throws SQLException {
-		String[] sp = str1.split("X");
-		ArrayList<String>item = parcial(sp[0].trim(), con);
-		System.out.println("Banco apagando item -> "+sp[0]);
-		String sql ="DELETE FROM controle WHERE id_cartao = "+id+" AND id_produto = "+item.get(2)+";";
+	private void alterar_item(String id, Connection con, String nome, String qtde)throws SQLException {
+		ArrayList<String> idProduto = parcial(nome, con);
+		String sql ="UPDATE controle SET qtde = "+qtde+" WHERE id_cliente = "+id+" AND id_produto = "+idProduto.get(2)+";";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.execute();
 	}
@@ -85,6 +83,7 @@ public class Banco {
 		ps.execute();
 		this.execute(cartao_numero, "cartao_numero", "", "");
 	}
+	
 	private ArrayList<String> consulta_cartao(String cartao_numero, Connection con)throws SQLException {
 		String sql = "SELECT id, nome, telefone FROM cartao WHERE numero = "+cartao_numero+";";
 		PreparedStatement ps = con.prepareStatement(sql);
@@ -111,11 +110,10 @@ public class Banco {
 	}
 
 	private ArrayList<String> consulta(String id,Connection con)throws SQLException {
-		
-		String sql ="SELECT cartao.id AS id_cartao, produtos.nome_produto AS produto, controle.qtde, produtos.valor FROM controle "+ 
-					"LEFT JOIN cartao ON cartao.id = id_cartao "+
-					"LEFT JOIN produtos ON produtos.id = id_produto "+
-					"WHERE id_cartao = "+id+";";
+		String sql ="SELECT cartao.id AS id_cartao, produtos.nome_produto AS produto, SUM(controle.qtde) AS QTDE, produtos.valor FROM controle " + 
+					"LEFT JOIN cartao ON cartao.id = id_cartao " + 
+					"LEFT JOIN produtos ON produtos.id = id_produto " + 
+					"WHERE id_cartao = "+id+" GROUP BY produto;";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ArrayList<String> consulta = new ArrayList<String>();
 		ResultSet res = ps.executeQuery();
@@ -141,50 +139,3 @@ public class Banco {
 		ps.executeQuery();
 	}
 }
-
-
-/*	
-select * from usuarios where nomes like '%pedro%'
-
-CREATE TABLE `cartao` (
-	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`numero` VARCHAR(8) NULL DEFAULT '0' COLLATE 'utf8_general_ci',
-	`nome` VARCHAR(50) NULL DEFAULT 'sem_nome' COLLATE 'utf8_general_ci',
-	`telefone` VARCHAR(50) NULL DEFAULT 'sem_telefone' COLLATE 'utf8_general_ci',
-	PRIMARY KEY (`id`) USING BTREE
-)
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-AUTO_INCREMENT=6
-;
-
-
-
-CREATE TABLE `controle` (
-	`qtde` INT(10) UNSIGNED NULL DEFAULT '0',
-	`id_cartao` INT(10) UNSIGNED NULL DEFAULT '0',
-	`id_produto` INT(10) UNSIGNED NULL DEFAULT '0',
-	INDEX `FK_controle_cartao` (`id_cartao`) USING BTREE,
-	INDEX `FK_controle_produtos` (`id_produto`) USING BTREE,
-	CONSTRAINT `FK_controle_cartao` FOREIGN KEY (`id_cartao`) REFERENCES `banco_cardsys`.`cartao` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT,
-	CONSTRAINT `FK_controle_produtos` FOREIGN KEY (`id_produto`) REFERENCES `banco_cardsys`.`produtos` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
-)
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-;
-
-
-
-CREATE TABLE `produtos` (
-	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`nome_produto` VARCHAR(50) NULL DEFAULT '0' COLLATE 'utf8_general_ci',
-	`valor` FLOAT(12) NULL DEFAULT '0',
-	PRIMARY KEY (`id`) USING BTREE
-)
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-AUTO_INCREMENT=4
-;
-
-
- */
