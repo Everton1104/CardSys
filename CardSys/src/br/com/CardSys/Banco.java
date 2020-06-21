@@ -47,11 +47,24 @@ public class Banco {
 		case "parcial": {
 			return parcial(str1, conexao);
 		}
+		case "apagar_item": {
+			apagar_item(id, conexao, str1, str2);
+			return null;
+		}
 		default:
 			throw new IllegalArgumentException("Valor inesperado: " + opc);
 		}
 	}
-	
+
+	private void apagar_item(String id, Connection con, String str1, String str2)throws SQLException {
+		String[] sp = str1.split("X");
+		ArrayList<String>item = parcial(sp[0].trim(), con);
+		System.out.println("Banco apagando item -> "+sp[0]);
+		String sql ="DELETE FROM controle WHERE id_cartao = "+id+" AND id_produto = "+item.get(2)+";";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.execute();
+	}
+
 	private ArrayList<String> parcial(String str1, Connection con)throws SQLException {
 		String sql ="SELECT * FROM produtos WHERE nome_produto like '"+str1+"%';";
 		PreparedStatement ps = con.prepareStatement(sql);
