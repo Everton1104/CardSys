@@ -57,6 +57,9 @@ public class Banco {
 	}
 
 	private void alterar_item(String id, Connection con, String nome, String qtde)throws SQLException {
+		
+		String sql2 = "SELECT id_cartao, id_produto, sum(qtde) FROM controle WHERE id_cartao = "+id+" GROUP BY id_produto;";
+		
 		ArrayList<String> idProduto = parcial(nome, con);
 		String sql ="UPDATE controle SET qtde = "+qtde+" WHERE id_cliente = "+id+" AND id_produto = "+idProduto.get(2)+";";
 		PreparedStatement ps = con.prepareStatement(sql);
