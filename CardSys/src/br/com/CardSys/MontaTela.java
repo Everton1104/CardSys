@@ -159,9 +159,6 @@ public class MontaTela extends JFrame {
 			
 			JButton btnEditar = new JButton("EDITAR QTDE");
 			btnEditar.setEnabled(false);
-			btnEditar.setFont(new Font("Tahoma", Font.PLAIN, 30));
-			btnEditar.setBounds(667, 232, 295, 59);
-			contentPane.add(btnEditar);
 			
 			ScrollPane scrollPane = new ScrollPane();
 			scrollPane.setBounds(10, 317, 979, 389);
@@ -183,23 +180,38 @@ public class MontaTela extends JFrame {
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
 					btnEditar.setEnabled(true);
-					btnEditar.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							try {
-								String[] nomeProduto = list.getSelectedValue().split("X");
-								String qtde = JOptionPane.showInputDialog(null, "Digite a nova quantidade de "+nomeProduto[0].trim()+"?", "Quantidade", JOptionPane.QUESTION_MESSAGE);
-								b.execute(id, "alterar_item", nomeProduto[0].trim(), qtde);
-								dispose();
-								cliente(id);
-								
-							} catch (Exception e1) {System.out.println("Erro apagar item do banco");e1.printStackTrace();}
-						}
-					});
 				}
 			});
 			
 			scrollPane.add(list);
 			contentPane.add(scrollPane);
+			
+			
+			btnEditar.setFont(new Font("Tahoma", Font.PLAIN, 30));
+			btnEditar.setBounds(667, 232, 295, 59);
+			btnEditar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						String[] nomeProduto = list.getSelectedValue().split("X");
+						String strQtde = JOptionPane.showInputDialog(null, "Digite a nova quantidade de "+nomeProduto[0].trim()+"?", "Quantidade", JOptionPane.QUESTION_MESSAGE);
+						int qtde = Integer.parseInt(strQtde);
+						if(qtde > 0) {
+							b.execute(id, "alterar_item", nomeProduto[0].trim(), strQtde);
+							dispose();
+							MontaTela c = new MontaTela();
+							c.cliente(id);
+							c.setVisible(true);
+						}else {
+							JOptionPane.showConfirmDialog(null, "Valor invalido! \n Digite um numero positivo.");
+							dispose();
+							MontaTela c = new MontaTela();
+							c.cliente(id);
+							c.setVisible(true);
+						}
+					} catch (Exception e1) {System.out.println("Erro apagar item do banco");e1.printStackTrace();}
+				}
+			});
+			contentPane.add(btnEditar);
 			
 		}else {
 			JLabel lblNewLabel_1_3 = new JLabel("Nome:");
@@ -297,31 +309,32 @@ public class MontaTela extends JFrame {
 		txtTeste.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				int k =e.getKeyCode();
+				int k = e.getKeyCode();
 				ArrayList<String> res = new ArrayList<>();
 				String letra = txtTeste.getText()+ e.getKeyChar();
-				if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k!=KeyEvent.VK_ENTER) {
-					try {
-						res = b.execute(id, "parcial", letra, "");
-						txtBusca.setText(res.get(2)+res.get(0)+" | Valor -> R$"+Float.parseFloat(res.get(1))+"0");
-					} catch (SQLException e1) {
-						System.out.println("Erro banco parcial.");
-						txtBusca.setText("Nada encontrado.");
-					}
-				}else if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE &&k == KeyEvent.VK_ENTER) {
-					try {
-						letra = txtTeste.getText();
-						res = b.execute(id, "parcial", letra, "");
-						String qtde = JOptionPane.showInputDialog(null, "Quantas unidades de "+res.get(0)+"?", "Quantidade", JOptionPane.QUESTION_MESSAGE);
-						if(res.size()>0&&(!qtde.isBlank()||!qtde.isEmpty())) {
-							b.execute(id, "add_pedido", res.get(2), qtde);
+				if(txtBusca.getText() != "") {
+					if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k!=KeyEvent.VK_ENTER) {
+						try {
+							res = b.execute(id, "parcial", letra, "");
+							txtBusca.setText(res.get(2)+res.get(0)+" | Valor -> R$"+Float.parseFloat(res.get(1))+"0");
+						} catch (SQLException e1) {
+							System.out.println("Erro banco parcial.");
+							txtBusca.setText("Nada encontrado.");
 						}
-						dispose();
-						MontaTela c =  new MontaTela();
-						c.cliente(id);
-						c.setVisible(true);
-						
-					} catch (Exception eQtde) {System.out.println("Erro na qtde!");eQtde.printStackTrace();}
+					}else if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE &&k == KeyEvent.VK_ENTER) {
+						try {
+							letra = txtTeste.getText();
+							res = b.execute(id, "parcial", letra, "");
+							String qtde = JOptionPane.showInputDialog(null, "Quantas unidades de "+res.get(0)+"?", "Quantidade", JOptionPane.QUESTION_MESSAGE);
+							if(res.size()>0&&(!qtde.isBlank()||!qtde.isEmpty())) {
+								b.execute(id, "add_pedido", res.get(2), qtde);
+							}
+							dispose();
+							MontaTela c =  new MontaTela();
+							c.cliente(id);
+							c.setVisible(true);
+						} catch (Exception eQtde) {System.out.println("Erro na qtde!");eQtde.printStackTrace();}
+					}
 				}
 			}});
 		

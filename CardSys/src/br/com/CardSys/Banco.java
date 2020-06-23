@@ -56,12 +56,10 @@ public class Banco {
 		}
 	}
 
-	private void alterar_item(String id, Connection con, String nome, String qtde)throws SQLException {
-		
-		String sql2 = "SELECT id_cartao, id_produto, sum(qtde) FROM controle WHERE id_cartao = "+id+" GROUP BY id_produto;";
-		
-		ArrayList<String> idProduto = parcial(nome, con);
-		String sql ="UPDATE controle SET qtde = "+qtde+" WHERE id_cliente = "+id+" AND id_produto = "+idProduto.get(2)+";";
+	private void alterar_item(String id, Connection con, String nome_produto, String qtde)throws SQLException {
+		ArrayList<String> idProduto = parcial(nome_produto, con);
+		if(qtde.isEmpty()) {return;}
+		String sql ="UPDATE controle SET qtde = "+qtde+" WHERE id_cartao = "+id+" AND id_produto = "+idProduto.get(2)+";";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.execute();
 	}
@@ -127,10 +125,20 @@ public class Banco {
 		return consulta;
 	}
 
-	private void add_pedido(String id, Connection con, String produto, String qtde )throws SQLException {
-		String sql ="INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+id+", "+produto+", "+qtde+");";
-		PreparedStatement ps = con.prepareStatement(sql);
-		ps.executeQuery();
+	private void add_pedido(String id, Connection con, String id_produto, String qtde )throws SQLException {
+		String sqlFind = "SELECT id_cartao, id_produto, qtde FROM controle WHERE id_cartao = "+id+" AND id_produto = "+id_produto+";";
+		PreparedStatement ps = con.prepareStatement(sqlFind);
+		ResultSet find = ps.executeQuery();
+		if(find.next()) {
+			int bd_qtde = Integer.parseInt(find.getString("qtde")) + Integer.parseInt(qtde);
+			String sql1 ="UPDATE controle SET qtde = "+bd_qtde+" WHERE id_cartao = "+id+" AND id_produto = "+id_produto+";";
+			PreparedStatement ps1 = con.prepareStatement(sql1);
+			ps1.executeQuery();
+		}else {
+			String sql2 ="INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+id+", "+id_produto+", "+qtde+");";
+			PreparedStatement ps2 = con.prepareStatement(sql2);
+			ps2.executeQuery();
+		}
 	}
 
 	private void add_nome(String id, Connection con, String nome, String telefone)throws SQLException {

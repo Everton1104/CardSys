@@ -9,6 +9,7 @@ public class Main {
 		telaini.setVisible(true);
 		while(true) {
 			tela.cliente(ard.ler());
+			//tela.cliente("26120142");
 			tela.setVisible(true);
 		}
 	}
