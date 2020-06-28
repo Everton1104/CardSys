@@ -347,8 +347,15 @@ public class MontaTela extends JFrame {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				txtBusca.setText(list.getSelectedValue());
-				txtTeste.setText(list.getSelectedValue());
+				try {
+					ArrayList<String> res = new ArrayList<>();
+					res = b.execute(id, "parcial", list.getSelectedValue(), "");
+					txtBusca.setText(res.get(0)+" | Valor -> R$"+Float.parseFloat(res.get(1))+"0");
+					txtTeste.setText(res.get(0)+" | Valor -> R$"+Float.parseFloat(res.get(1))+"0");
+				} catch (SQLException e1) {
+					System.out.println("Erro banco parcial.");
+					txtBusca.setText("Nada encontrado.");
+				}
 				txtTeste.requestFocus();
 			}
 		});
@@ -365,14 +372,16 @@ public class MontaTela extends JFrame {
 					if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k!=KeyEvent.VK_ENTER) {
 						try {
 							res = b.execute(id, "parcial", letra, "");
-							txtBusca.setText(res.get(2)+res.get(0)+" | Valor -> R$"+Float.parseFloat(res.get(1))+"0");
+							txtBusca.setText(res.get(0)+" | Valor -> R$"+Float.parseFloat(res.get(1))+"0");
 						} catch (SQLException e1) {
 							System.out.println("Erro banco parcial.");
 							txtBusca.setText("Nada encontrado.");
 						}
 					}else if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE &&k == KeyEvent.VK_ENTER) {
 						try {
-							letra = txtTeste.getText();
+							String[] sp = txtTeste.getText().split("|");
+							letra = sp[0].trim();
+							System.out.println(letra);
 							res = b.execute(id, "parcial", letra, "");
 							String qtde = JOptionPane.showInputDialog(null, "Quantas unidades de "+res.get(0)+"?", "Quantidade", JOptionPane.QUESTION_MESSAGE);
 							if(res.size()>0&&(!qtde.isBlank()||!qtde.isEmpty())) {
