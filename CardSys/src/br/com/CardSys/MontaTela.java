@@ -381,7 +381,6 @@ public class MontaTela extends JFrame {
 						try {
 							String[] sp = txtTeste.getText().split("|");
 							letra = sp[0].trim();
-							System.out.println(letra);
 							res = b.execute(id, "parcial", letra, "");
 							String qtde = JOptionPane.showInputDialog(null, "Quantas unidades de "+res.get(0)+"?", "Quantidade", JOptionPane.QUESTION_MESSAGE);
 							if(res.size()>0&&(!qtde.isBlank()||!qtde.isEmpty())) {
