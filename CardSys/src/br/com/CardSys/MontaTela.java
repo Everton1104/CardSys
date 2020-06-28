@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -182,7 +184,6 @@ public class MontaTela extends JFrame {
 					btnEditar.setEnabled(true);
 				}
 			});
-			
 			scrollPane.add(list);
 			contentPane.add(scrollPane);
 			
@@ -305,6 +306,54 @@ public class MontaTela extends JFrame {
 		txtBusca.setBounds(55, 275, 888, 58);
 		contentPane.add(txtBusca);
 		txtBusca.setColumns(10);
+		txtBusca.addMouseListener(new MouseListener(){
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				txtTeste.requestFocus();
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				//txtTeste.requestFocus();
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				//txtTeste.requestFocus();
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				//txtTeste.requestFocus();
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//txtTeste.requestFocus();
+			}
+		});
+		
+		ScrollPane scrollPane = new ScrollPane();
+		scrollPane.setBounds(55, 350, 888, 250);
+		ArrayList<String> dados = b.execute(id, "consultaProduto", "", "");
+		JList<String> list = new JList<>(new AbstractListModel<String>() {
+			private static final long serialVersionUID = 1L;
+			public int getSize() {
+				return dados.size();
+			}
+			public String getElementAt(int index) {
+				return dados.get(index);
+			}
+		});
+		list.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		list.setBounds(10, 321, 979, 385);
+		list.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				txtBusca.setText(list.getSelectedValue());
+				txtTeste.setText(list.getSelectedValue());
+				txtTeste.requestFocus();
+			}
+		});
+		scrollPane.add(list);
+		contentPane.add(scrollPane);
 		
 		txtTeste.addKeyListener(new KeyAdapter() {
 			@Override
@@ -340,8 +389,8 @@ public class MontaTela extends JFrame {
 		
 		JLabel lblNewLabel_1 = new JLabel("ENTER PARA CONFIRMAR");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 60));
-		lblNewLabel_1.setBounds(55, 370, 888, 130);
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 50));
+		lblNewLabel_1.setBounds(55, 600, 888, 130);
 		contentPane.add(lblNewLabel_1);
 	}
 }

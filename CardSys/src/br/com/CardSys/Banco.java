@@ -37,6 +37,9 @@ public class Banco {
 		case "consulta": {//reotorna get(0)=produto, get(1)=qtde, get(2)=valor, get(n)=n.
 			return consulta(id, conexao);
 		}
+		case "consultaProduto": {
+			return consultaProduto(id, conexao);
+		}
 		case "limpar": {
 			limpar(id, conexao);
 			return null;
@@ -54,6 +57,17 @@ public class Banco {
 		default:
 			throw new IllegalArgumentException("Valor inesperado: " + opc);
 		}
+	}
+
+	private ArrayList<String> consultaProduto(String id, Connection con)throws SQLException {
+		String sql = "SELECT produtos.nome_produto AS produto FROM produtos;";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ArrayList<String> consultaProduto = new ArrayList<String>();
+		ResultSet res = ps.executeQuery();
+		while (res.next()) {
+			consultaProduto.add(res.getString("produto"));
+		}
+		return consultaProduto;
 	}
 
 	private void alterar_item(String id, Connection con, String nome_produto, String qtde)throws SQLException {
