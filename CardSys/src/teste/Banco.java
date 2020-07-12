@@ -27,6 +27,7 @@ public class Banco {
 			while(res.next()) {
 				produtos.add(res.getString("nome_produto")+" R$ "+Float.parseFloat(res.getString("valor"))+"0");
 			}
+			System.out.println("Banco consulta-> "+produtos);
 			return produtos;
 		}else {
 			String sql = "SELECT * FROM produtos WHERE nome_produto LIKE '%"+busca+"%';";
@@ -35,6 +36,7 @@ public class Banco {
 			while(res.next()) {
 				produtos.add(res.getString("nome_produto")+" R$ "+Float.parseFloat(res.getString("valor"))+"0");
 			}
+			System.out.println("Banco consulta-> "+produtos);
 			return produtos;
 		}
 	}
@@ -61,6 +63,7 @@ public class Banco {
 			ps.execute();
 			ps.close();
 			this.execute(numero_id);
+			System.out.println("Banco consulta-> Novo cartao adicionado!");
 			return null;
 		}
 		sql = "SELECT cartao.id AS id_cartao, cartao.numero AS numero_cartao, cartao.nome AS nome_cartao, cartao.telefone, " + 
@@ -87,6 +90,7 @@ public class Banco {
 		}while(res.next());
 		cliente.setProdutos(produtos);
 		ps.close();
+		System.out.println("Banco consulta-> "+cliente);
 		return cliente;
 	}	
 }

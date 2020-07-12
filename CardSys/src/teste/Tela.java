@@ -39,34 +39,13 @@ public class Tela extends JFrame {
 		JTextField busca =  new JTextField();
 		busca.setBounds((d.width-(d.width-10))/2, 65, d.width-10, 50);
 		busca.setFont(new Font("Tahoma", Font.PLAIN, 45));
-		busca.requestFocus();
 		busca.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				int k = e.getKeyCode();
 				if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k!=KeyEvent.VK_ENTER) {
 					try {
-						ArrayList<String> listaProdutos =  new ArrayList<>(b.consulta(busca.getText()));
 						
-						ScrollPane Sprodutos = new ScrollPane();
-						Sprodutos.setBounds(5, 150, d.width-10, d.height-150);
-						JList<String> produtos = new JList<>();
-						produtos.setBounds(5, 150, d.width-10, d.height-150);
-						produtos.setFont(new Font("Tahoma", Font.PLAIN, 45));
-						produtos.setModel(new AbstractListModel<String>() {
-							private static final long serialVersionUID = 1L;
-							@Override
-							public int getSize() {
-								return listaProdutos.size();
-							}
-							@Override
-							public String getElementAt(int index) {
-								return listaProdutos.get(index);
-							}
-						});
-						Sprodutos.add(produtos);
-						contentPane.add(Sprodutos);
-						busca.requestFocus();
 					}catch(Exception err) {
 						err.printStackTrace();
 					}
@@ -76,5 +55,25 @@ public class Tela extends JFrame {
 			};
 		});
 		contentPane.add(busca);
+	
+		ArrayList<String> listaProdutos =  new ArrayList<>();
+		ScrollPane Sprodutos = new ScrollPane();
+		Sprodutos.setBounds(5, 150, d.width-10, d.height-150);
+		JList<String> produtos = new JList<>();
+		produtos.setModel(new AbstractListModel<String>() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public int getSize() {
+				return listaProdutos.size();
+			}
+			@Override
+			public String getElementAt(int index) {
+				return listaProdutos.get(index);
+			}
+		});
+		produtos.setBounds(5, 150, d.width-10, d.height-150);
+		produtos.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		Sprodutos.add(produtos);
+		contentPane.add(Sprodutos);
 	}
 }
