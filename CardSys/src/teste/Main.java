@@ -25,6 +25,8 @@ public class Main {
 			System.out.println("Total: "+(Float.parseFloat(produto.get(i).get(2)))*Float.parseFloat(produto.get(i).get(3)));
 		}
 		
-		
+		ArrayList<String> Listaprodutos =  new ArrayList<>();
+		Listaprodutos = b.consulta();
+		System.out.println(Listaprodutos);
 	}
 }

@@ -8,6 +8,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Banco {
+	
+	public ArrayList<String> consulta() throws SQLException {
+		ArrayList<String> produtos = new ArrayList<>();
+		
+		String url = "jdbc:mysql://127.0.0.1/banco_cardsys";
+		String user = "root";
+		String password = "root";
+		Connection conexao = DriverManager.getConnection(url, user, password);
+		PreparedStatement ps;
+		ResultSet res ;
+		
+		String sql = "SELECT * FROM produtos;";
+		ps = conexao.prepareStatement(sql);
+		res = ps.executeQuery();
+		while(res.next()) {
+			produtos.add(res.getString("nome_produto")+" R$ "+Float.parseFloat(res.getString("valor")));
+		}
+		return produtos;
+	}
+	
 	public Cliente execute(String numero_id) throws SQLException {
 		
 		String url = "jdbc:mysql://127.0.0.1/banco_cardsys";
@@ -19,7 +39,6 @@ public class Banco {
 		String id = "";
 		Cliente cliente =  new Cliente();
 		ArrayList<Object> produtos = new ArrayList<>();
-		
 		String sql = "SELECT id FROM cartao WHERE numero = "+numero_id+";";
 		ps = conexao.prepareStatement(sql);
 		res = ps.executeQuery();
