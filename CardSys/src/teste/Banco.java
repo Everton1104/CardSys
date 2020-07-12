@@ -9,7 +9,8 @@ import java.util.ArrayList;
 
 public class Banco {
 	
-	public ArrayList<String> consulta() throws SQLException {
+	public ArrayList<String> consulta(String busca) throws SQLException {
+		
 		ArrayList<String> produtos = new ArrayList<>();
 		
 		String url = "jdbc:mysql://127.0.0.1/banco_cardsys";
@@ -19,13 +20,23 @@ public class Banco {
 		PreparedStatement ps;
 		ResultSet res ;
 		
-		String sql = "SELECT * FROM produtos;";
-		ps = conexao.prepareStatement(sql);
-		res = ps.executeQuery();
-		while(res.next()) {
-			produtos.add(res.getString("nome_produto")+" R$ "+Float.parseFloat(res.getString("valor")));
+		if(busca.isBlank()||busca.isEmpty()) {
+			String sql = "SELECT * FROM produtos;";
+			ps = conexao.prepareStatement(sql);
+			res = ps.executeQuery();
+			while(res.next()) {
+				produtos.add(res.getString("nome_produto")+" R$ "+Float.parseFloat(res.getString("valor"))+"0");
+			}
+			return produtos;
+		}else {
+			String sql = "SELECT * FROM produtos WHERE nome_produto LIKE '%"+busca+"%';";
+			ps = conexao.prepareStatement(sql);
+			res = ps.executeQuery();
+			while(res.next()) {
+				produtos.add(res.getString("nome_produto")+" R$ "+Float.parseFloat(res.getString("valor"))+"0");
+			}
+			return produtos;
 		}
-		return produtos;
 	}
 	
 	public Cliente execute(String numero_id) throws SQLException {

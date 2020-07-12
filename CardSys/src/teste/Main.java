@@ -26,7 +26,7 @@ public class Main {
 		}
 		
 		ArrayList<String> Listaprodutos =  new ArrayList<>();
-		Listaprodutos = b.consulta();
+		Listaprodutos = b.consulta("");
 		System.out.println(Listaprodutos);
 	}
 }

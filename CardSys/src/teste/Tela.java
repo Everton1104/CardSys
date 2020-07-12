@@ -2,7 +2,10 @@ package teste;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.ScrollPane;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -11,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 public class Tela extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -20,7 +23,7 @@ public class Tela extends JFrame {
 	Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 	Banco b = new Banco();
 	
-	public void iniciar() throws SQLException {
+	public void produtos() throws SQLException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
@@ -28,33 +31,50 @@ public class Tela extends JFrame {
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
 		
-		JLabel labelInicio = new JLabel("INICIO");
+		JLabel labelInicio = new JLabel("PRODUTOS");
 		labelInicio.setFont(new Font("Tahoma", Font.PLAIN, 60));
-		labelInicio.setBounds((d.width-200)/2, 0, 200, 60);
+		labelInicio.setBounds((d.width-350)/2, 0, 350, 60);
 		contentPane.add(labelInicio);
 		
-		ArrayList<String> listaProdutos =  new ArrayList<>(b.consulta());
-		
-		JScrollPane Sprodutos = new JScrollPane();
-		Sprodutos.setBounds(10, 100, d.width-20, d.height-150);
-		JList<String> produtos = new JList<>();
-		produtos.setBounds(12, 102, Sprodutos.getWidth()-2, Sprodutos.getHeight()-2);
-		produtos.setFont(new Font("Tahoma", Font.PLAIN, 45));
-		produtos.setModel(new AbstractListModel<String>() {
-			private static final long serialVersionUID = 1L;
-
+		JTextField busca =  new JTextField();
+		busca.setBounds((d.width-(d.width-10))/2, 65, d.width-10, 50);
+		busca.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		busca.requestFocus();
+		busca.addKeyListener(new KeyAdapter() {
 			@Override
-			public int getSize() {
-				return listaProdutos.size();
-			}
-
-			@Override
-			public String getElementAt(int index) {
-				return listaProdutos.get(index);
-			}
+			public void keyPressed(KeyEvent e) {
+				int k = e.getKeyCode();
+				if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k!=KeyEvent.VK_ENTER) {
+					try {
+						ArrayList<String> listaProdutos =  new ArrayList<>(b.consulta(busca.getText()));
+						
+						ScrollPane Sprodutos = new ScrollPane();
+						Sprodutos.setBounds(5, 150, d.width-10, d.height-150);
+						JList<String> produtos = new JList<>();
+						produtos.setBounds(5, 150, d.width-10, d.height-150);
+						produtos.setFont(new Font("Tahoma", Font.PLAIN, 45));
+						produtos.setModel(new AbstractListModel<String>() {
+							private static final long serialVersionUID = 1L;
+							@Override
+							public int getSize() {
+								return listaProdutos.size();
+							}
+							@Override
+							public String getElementAt(int index) {
+								return listaProdutos.get(index);
+							}
+						});
+						Sprodutos.add(produtos);
+						contentPane.add(Sprodutos);
+						busca.requestFocus();
+					}catch(Exception err) {
+						err.printStackTrace();
+					}
+				}else if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k==KeyEvent.VK_ENTER) {
+					
+				}
+			};
 		});
-		produtos.requestFocus();
-		Sprodutos.add(produtos);
-		contentPane.add(Sprodutos);
+		contentPane.add(busca);
 	}
 }
