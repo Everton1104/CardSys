@@ -45,7 +45,7 @@ public class Tela extends JFrame {
 				int k = e.getKeyCode();
 				if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k!=KeyEvent.VK_ENTER) {
 					try {
-						
+						//testar lista.setvisible true para mostrar e tbm tentar usar o jdialog com jtextfield
 					}catch(Exception err) {
 						err.printStackTrace();
 					}
