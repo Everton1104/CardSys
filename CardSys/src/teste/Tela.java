@@ -23,6 +23,25 @@ public class Tela extends JFrame {
 	Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 	Banco b = new Banco();
 	
+	public void cliente(String id) throws SQLException {
+		
+		Cliente c = new Cliente();
+		c = b.execute(id);
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setExtendedState(MAXIMIZED_BOTH);
+		setUndecorated(true);
+		contentPane = new JPanel();
+		contentPane.setLayout(null);
+		setContentPane(contentPane);
+		
+		JLabel id_cliente = new JLabel("ID: "+c.getId());
+		id_cliente.setBounds(50, 50, 300, 40);
+		id_cliente.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		contentPane.add(id_cliente);
+		
+	}
+	
 	public void produtos() throws SQLException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
@@ -36,6 +55,14 @@ public class Tela extends JFrame {
 		labelInicio.setBounds((d.width-350)/2, 0, 350, 60);
 		contentPane.add(labelInicio);
 		
+		ScrollPane scroll = new ScrollPane();
+		scroll.setBounds((d.width-(d.width-10))/2, 265, d.width-10, d.height-10);
+		JList<String> lista =  new JList<>();
+		lista.setBounds((d.width-(d.width-10))/2, 265, d.width-10, d.height-10);
+		lista.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		scroll.add(lista);
+		contentPane.add(scroll);
+		
 		JTextField busca =  new JTextField();
 		busca.setBounds((d.width-(d.width-10))/2, 65, d.width-10, 50);
 		busca.setFont(new Font("Tahoma", Font.PLAIN, 45));
@@ -45,35 +72,28 @@ public class Tela extends JFrame {
 				int k = e.getKeyCode();
 				if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k!=KeyEvent.VK_ENTER) {
 					try {
-						//testar lista.setvisible true para mostrar e tbm tentar usar o jdialog com jtextfield
+						ArrayList<String> produtos =  new ArrayList<>(b.consulta(busca.getText()));
+						AbstractListModel<String> modelo = new AbstractListModel<>() {
+							private static final long serialVersionUID = 1L;
+							@Override
+							public int getSize() {
+								return produtos.size();
+							}
+								@Override
+							public String getElementAt(int index) {
+								return produtos.get(index);
+							}
+						};
+						lista.setModel(modelo);
 					}catch(Exception err) {
 						err.printStackTrace();
 					}
 				}else if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k==KeyEvent.VK_ENTER) {
-					
+					//FALTA FINALIZAR SELECAO DE ITEM COM ENTER E CLIQUE!
+					System.out.println(lista.getSelectedValue().toString());
 				}
 			};
 		});
 		contentPane.add(busca);
-	
-		ArrayList<String> listaProdutos =  new ArrayList<>();
-		ScrollPane Sprodutos = new ScrollPane();
-		Sprodutos.setBounds(5, 150, d.width-10, d.height-150);
-		JList<String> produtos = new JList<>();
-		produtos.setModel(new AbstractListModel<String>() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public int getSize() {
-				return listaProdutos.size();
-			}
-			@Override
-			public String getElementAt(int index) {
-				return listaProdutos.get(index);
-			}
-		});
-		produtos.setBounds(5, 150, d.width-10, d.height-150);
-		produtos.setFont(new Font("Tahoma", Font.PLAIN, 45));
-		Sprodutos.add(produtos);
-		contentPane.add(Sprodutos);
 	}
 }

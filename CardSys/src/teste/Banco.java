@@ -55,7 +55,8 @@ public class Banco {
 		String sql = "SELECT id FROM cartao WHERE numero = "+numero_id+";";
 		ps = conexao.prepareStatement(sql);
 		res = ps.executeQuery();
-		if(res.next()) {
+		res.next();
+		if(!res.getString("id").isEmpty()) {
 			id = res.getString("id");
 		}else {
 			sql = "INSERT INTO cartao (numero) VALUES ("+numero_id+");";
@@ -66,28 +67,30 @@ public class Banco {
 			System.out.println("Banco consulta-> Novo cartao adicionado!");
 			return null;
 		}
-		sql = "SELECT cartao.id AS id_cartao, cartao.numero AS numero_cartao, cartao.nome AS nome_cartao, cartao.telefone, " + 
-				"produtos.id AS id_produto, produtos.nome_produto AS produto, produtos.valor, " + 
-				"controle.qtde FROM controle " + 
-				"LEFT JOIN cartao ON cartao.id = id_cartao " + 
-				"LEFT JOIN produtos ON produtos.id = id_produto " + 
-				"WHERE id_cartao = "+id+";";
+		
+		//separar em duas fazes a consulta de dados uma para pegar o nome e tel. e outra para lista de produtos.
+		
+		sql = "SELECT * FROM cartao WHERE id = "+id+";";
 		ps.close();
 		ps = conexao.prepareStatement(sql);
 		res = ps.executeQuery();
 		res.next();
-		cliente.setId(res.getString("id_cartao"));
-		cliente.setNumero(res.getString("numero_cartao"));
-		cliente.setNome(res.getString("nome_cartao"));
+		cliente.setId(res.getString("id"));
+		cliente.setNumero(res.getString("numero"));
+		cliente.setNome(res.getString("nome"));
 		cliente.setTelefone(res.getString("telefone"));
-		do {
-			ArrayList<String>produto =  new ArrayList<>();
+		ps.close();
+		sql = "";//fazer consulta no banco para retornar os valores
+		ps = conexao.prepareStatement(sql);
+		res = ps.executeQuery();
+		while(res.next()){
+			ArrayList<Object>produto =  new ArrayList<>();
 			produto.add(res.getString("id_produto"));
 			produto.add(res.getString("produto"));
 			produto.add(res.getString("valor"));
 			produto.add(res.getString("qtde"));
 			produtos.add(produto);
-		}while(res.next());
+		}
 		cliente.setProdutos(produtos);
 		ps.close();
 		System.out.println("Banco consulta-> "+cliente);
