@@ -9,6 +9,10 @@ import java.util.ArrayList;
 
 public class Banco {
 	
+	public void add(String id_produto, String id_cliente, String qtde) throws SQLException {
+		
+	}
+	
 	public ArrayList<String> consulta(String busca) throws SQLException {
 		
 		ArrayList<String> produtos = new ArrayList<>();
@@ -51,7 +55,7 @@ public class Banco {
 		ResultSet res ;
 		String id = "";
 		Cliente cliente =  new Cliente();
-		ArrayList<Object> produtos = new ArrayList<>();
+		ArrayList<String> produtos = new ArrayList<>();
 		String sql = "SELECT id FROM cartao WHERE numero = "+numero_id+";";
 		ps = conexao.prepareStatement(sql);
 		res = ps.executeQuery();
@@ -68,8 +72,6 @@ public class Banco {
 			return null;
 		}
 		
-		//separar em duas fazes a consulta de dados uma para pegar o nome e tel. e outra para lista de produtos.
-		
 		sql = "SELECT * FROM cartao WHERE id = "+id+";";
 		ps.close();
 		ps = conexao.prepareStatement(sql);
@@ -80,20 +82,22 @@ public class Banco {
 		cliente.setNome(res.getString("nome"));
 		cliente.setTelefone(res.getString("telefone"));
 		ps.close();
-		sql = "";//fazer consulta no banco para retornar os valores
+		sql = "SELECT produtos.id, produtos.nome_produto AS nome, controle.qtde ,produtos.valor FROM controle " + 
+				"LEFT JOIN produtos ON id_produto = produtos.id " + 
+				"WHERE id_cartao = "+id+";";
 		ps = conexao.prepareStatement(sql);
 		res = ps.executeQuery();
 		while(res.next()){
-			ArrayList<Object>produto =  new ArrayList<>();
-			produto.add(res.getString("id_produto"));
-			produto.add(res.getString("produto"));
-			produto.add(res.getString("valor"));
+			ArrayList<String>produto =  new ArrayList<>();
+			produto.add(res.getString("id"));
+			produto.add(res.getString("nome"));
 			produto.add(res.getString("qtde"));
-			produtos.add(produto);
+			produto.add(res.getString("valor"));
+			produtos.addAll(produto);
 		}
 		cliente.setProdutos(produtos);
 		ps.close();
-		System.out.println("Banco consulta-> "+cliente);
+		System.out.println("Banco consulta produtos-> "+cliente.getProdutos());
 		return cliente;
 	}	
 }

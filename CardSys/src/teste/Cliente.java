@@ -7,13 +7,13 @@ public class Cliente {
 	private String numero;
 	private String nome;
 	private String telefone;
-	private ArrayList<Object> produtos;
+	private ArrayList<String> produtos;
 
-	public ArrayList<Object> getProdutos() {
+	public ArrayList<String> getProdutos() {
 		return produtos;
 	}
 
-	public void setProdutos(ArrayList<Object> produtos) {
+	public void setProdutos(ArrayList<String> produtos) {
 		this.produtos = produtos;
 	}
 

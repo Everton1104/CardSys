@@ -22,6 +22,7 @@ public class Tela extends JFrame {
 	private JPanel contentPane;
 	Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 	Banco b = new Banco();
+	ArrayList<String> produtos = new ArrayList<>();
 	
 	public void cliente(String id) throws SQLException {
 		
@@ -39,6 +40,35 @@ public class Tela extends JFrame {
 		id_cliente.setBounds(50, 50, 300, 40);
 		id_cliente.setFont(new Font("Tahoma", Font.PLAIN, 45));
 		contentPane.add(id_cliente);
+		
+		JLabel nome_cliente = new JLabel("Nome: "+c.getNome());
+		nome_cliente.setBounds(50, 100, 300, 40);
+		nome_cliente.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		contentPane.add(nome_cliente);
+		
+		JLabel telefone_cliente = new JLabel("Telefone: "+c.getTelefone());
+		telefone_cliente.setBounds(50, 150, 600, 40);
+		telefone_cliente.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		contentPane.add(telefone_cliente);
+		
+		ScrollPane scroll = new ScrollPane();
+		scroll.setBounds(10, 200, d.width-20, d.height-200);
+		produtos = c.getProdutos();
+		JList<String> lista =  new JList<>(new AbstractListModel<>() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public int getSize() {
+				return produtos.size();
+			}
+			@Override
+			public String getElementAt(int index) {
+				return produtos.get(index);
+			}
+		});
+		lista.setBounds(10, 200, d.width-20, d.height-200);
+		lista.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		scroll.add(lista);
+		contentPane.add(scroll);
 		
 	}
 	
