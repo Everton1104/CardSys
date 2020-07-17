@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.ScrollPane;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
@@ -14,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -25,10 +28,10 @@ public class Tela extends JFrame {
 	Banco b = new Banco();
 	ArrayList<String> produtos = new ArrayList<>();
 	
-	public void cliente(String id) throws SQLException {
+	public void cliente(String numero_id) throws SQLException {
 		
 		Cliente c = new Cliente();
-		c = b.execute(id);
+		c = b.execute(numero_id);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
@@ -75,6 +78,16 @@ public class Tela extends JFrame {
 		add.setFont(new Font("Tahoma", Font.PLAIN, 45));
 		add.setBounds(d.width-900, 120, 400, 70);
 		add.requestFocus();
+		add.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {	
+					Tela t = new Tela();
+					t.produtos(numero_id);
+					t.setVisible(true);
+				}catch(Exception addErr) {addErr.printStackTrace();}
+			}
+		});
 		contentPane.add(add);
 		
 		JButton edt = new JButton("Editar");
@@ -83,8 +96,8 @@ public class Tela extends JFrame {
 		contentPane.add(edt);
 	}
 	
-	public void produtos() throws SQLException {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public void produtos(String numero_id) throws SQLException {
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
 		contentPane = new JPanel();
@@ -126,12 +139,15 @@ public class Tela extends JFrame {
 							}
 						};
 						lista.setModel(modelo);
+						lista.setSelectedIndex(0);
 					}catch(Exception err) {
 						err.printStackTrace();
 					}
 				}else if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k==KeyEvent.VK_ENTER) {
-					//FALTA FINALIZAR SELECAO DE ITEM COM ENTER E CLIQUE!
-					System.out.println(lista.getSelectedValue().toString());
+					String qtde = JOptionPane.showInputDialog("Quantidade de "+lista.getSelectedValue());
+					try {
+						b.add(lista.getSelectedValue(), numero_id, qtde);
+					}catch(Exception buscaErr) {buscaErr.printStackTrace();}
 				}
 			};
 		});
