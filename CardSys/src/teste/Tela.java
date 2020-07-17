@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -70,6 +71,16 @@ public class Tela extends JFrame {
 		scroll.add(lista);
 		contentPane.add(scroll);
 		
+		JButton add = new JButton("Adicionar produto");
+		add.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		add.setBounds(d.width-900, 120, 400, 70);
+		add.requestFocus();
+		contentPane.add(add);
+		
+		JButton edt = new JButton("Editar");
+		edt.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		edt.setBounds(d.width-450, 120, 400, 70);
+		contentPane.add(edt);
 	}
 	
 	public void produtos() throws SQLException {

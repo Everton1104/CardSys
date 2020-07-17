@@ -10,6 +10,12 @@ import java.util.ArrayList;
 public class Banco {
 	
 	public void add(String id_produto, String id_cliente, String qtde) throws SQLException {
+		String url = "jdbc:mysql://127.0.0.1/banco_cardsys";
+		String user = "root";
+		String password = "root";
+		Connection conexao = DriverManager.getConnection(url, user, password);
+		PreparedStatement ps;
+		ResultSet res ;
 		
 	}
 	
