@@ -33,7 +33,7 @@ public class Tela extends JFrame {
 		Cliente c = new Cliente();
 		c = b.execute(numero_id);
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//temporario - mudar quando implementar metdo construtor.
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
 		contentPane = new JPanel();
@@ -147,6 +147,7 @@ public class Tela extends JFrame {
 					String qtde = JOptionPane.showInputDialog("Quantidade de "+lista.getSelectedValue());
 					try {
 						b.add(lista.getSelectedValue(), numero_id, qtde);
+						dispose();
 					}catch(Exception buscaErr) {buscaErr.printStackTrace();}
 				}
 			};

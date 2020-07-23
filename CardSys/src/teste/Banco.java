@@ -9,14 +9,21 @@ import java.util.ArrayList;
 
 public class Banco {
 	
-	public void add(String id_produto, String numero_id, String qtde) throws SQLException {
+	public void add(String nome_produto, String cliente_id, String qtde) throws SQLException {
 		String url = "jdbc:mysql://127.0.0.1/banco_cardsys";
 		String user = "root";
 		String password = "root";
 		Connection conexao = DriverManager.getConnection(url, user, password);
 		PreparedStatement ps;
 		ResultSet res ;
-		
+		String[] id_produto = nome_produto.split(" ");
+		System.out.println(id_produto[0]);
+		String sql = "SELECT * FROM controle WHERE id_cartao = "+cliente_id+" AND id_produto = "+id_produto[0]+";";
+		ps = conexao.prepareStatement(sql);
+		res = ps.executeQuery();
+		if(res.next()) {
+			//terminar
+		}
 	}
 	
 	public ArrayList<String> consulta(String busca) throws SQLException {
@@ -35,7 +42,7 @@ public class Banco {
 			ps = conexao.prepareStatement(sql);
 			res = ps.executeQuery();
 			while(res.next()) {
-				produtos.add(res.getString("nome_produto")+" R$ "+Float.parseFloat(res.getString("valor"))+"0");
+				produtos.add(res.getString("id")+" "+res.getString("nome_produto")+" R$ "+Float.parseFloat(res.getString("valor"))+"0");
 			}
 			System.out.println("Banco consulta-> "+produtos);
 			return produtos;
@@ -44,7 +51,7 @@ public class Banco {
 			ps = conexao.prepareStatement(sql);
 			res = ps.executeQuery();
 			while(res.next()) {
-				produtos.add(res.getString("nome_produto")+" R$ "+Float.parseFloat(res.getString("valor"))+"0");
+				produtos.add(res.getString("id")+" "+res.getString("nome_produto")+" R$ "+Float.parseFloat(res.getString("valor"))+"0");
 			}
 			System.out.println("Banco consulta-> "+produtos);
 			return produtos;
