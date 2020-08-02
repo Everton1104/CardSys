@@ -69,13 +69,13 @@ public class Banco {
 		return cliente;
 	}	
 	
-	public ArrayList<String> produtos()throws SQLException{
+	public ArrayList<String> produtos(String busca)throws SQLException{
 		
 		PreparedStatement ps;
 		ResultSet res ;
 		ArrayList<String> lista = new ArrayList<>();
 		
-		String sql = "SELECT * FROM produtos;";
+		String sql = "SELECT * FROM produtos WHERE nome_produto LIKE '%"+busca+"%';";
 		ps = this.Con().prepareStatement(sql);
 		res = ps.executeQuery();
 		while(res.next()) {

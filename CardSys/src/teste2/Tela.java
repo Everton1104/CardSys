@@ -6,6 +6,8 @@ import java.awt.ScrollPane;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -15,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class Tela extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -76,7 +79,7 @@ public class Tela extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					new Tela().showProdutos();
+					new Tela().showProdutos(cliente);
 					dispose();
 				} catch (Exception e2) {
 					e2.printStackTrace();
@@ -117,9 +120,9 @@ public class Tela extends JFrame {
 		this.setVisible(true);
 	}
 	
-	public void showProdutos()throws SQLException{
+	public void showProdutos(Cliente c)throws SQLException{
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
 		contentPane = new JPanel();
@@ -132,23 +135,57 @@ public class Tela extends JFrame {
 		produtos.setFont(new Font("Tahoma", Font.PLAIN, 45));
 		contentPane.add(produtos);
 		
+		//ADICIONAR
+		JButton add = new JButton("ADICIONAR");
+		add.setEnabled(false);
+		add.setBounds((d.width-275)/2, 125, 275, 50);
+		add.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		contentPane.add(add);
+		
+		//PESQUISA
+		JTextField busca = new JTextField();
+		busca.setBounds(10, 190, d.width-20, 50);
+		busca.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		contentPane.add(busca);
+		
+		
 		//LISTA DE PRODUTOS
 		ScrollPane scroll = new ScrollPane();
 		scroll.setBounds(10, 250, d.width-20, d.height-260);
-			ArrayList<String> p = new ArrayList<>(new Banco().produtos());
-			JList<String> lista = new JList<>(new AbstractListModel<>() {
-				private static final long serialVersionUID = 1L;
-				@Override
-				public int getSize() {
-					return p.size();
-				}
-				@Override
-				public String getElementAt(int index) {
-					return p.get(index);
-				}
-			});
+			JList<String> lista = new JList<>();
 			lista.setFont(new Font("Tahoma", Font.PLAIN, 45));
 			lista.setBounds(scroll.getBounds());
+			busca.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+						try {
+							
+							
+							System.out.println(lista.getSelectedValue());//2: Cerveja_Skol_600ml R$ 9
+							
+							
+						}catch(Exception e2) {e2.printStackTrace();}
+					}else {
+						try {	
+							ArrayList<String> p = new Banco().produtos(busca.getText().trim());
+							AbstractListModel<String> modelo = new AbstractListModel<>() {
+								private static final long serialVersionUID = 1L;
+								@Override
+								public int getSize() {
+									return p.size();
+								}
+								@Override
+								public String getElementAt(int index) {
+									return p.get(index);
+								}
+							};
+							lista.setModel(modelo);
+							lista.setSelectedIndex(0);
+						}catch(Exception e3) {e3.printStackTrace();}
+					}
+				}
+			});
 			scroll.add(lista);
 		contentPane.add(scroll);
 		
