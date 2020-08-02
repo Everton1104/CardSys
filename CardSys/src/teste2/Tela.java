@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
@@ -134,25 +135,16 @@ public class Tela extends JFrame {
 		//LISTA DE PRODUTOS
 		ScrollPane scroll = new ScrollPane();
 		scroll.setBounds(10, 250, d.width-20, d.height-260);
+			ArrayList<String> p = new ArrayList<>(new Banco().produtos());
 			JList<String> lista = new JList<>(new AbstractListModel<>() {
 				private static final long serialVersionUID = 1L;
 				@Override
 				public int getSize() {
-					try {
-						return new Banco().produtos().size();
-					} catch (Exception e) {
-						e.printStackTrace();
-						return 0;
-					}
+					return p.size();
 				}
 				@Override
 				public String getElementAt(int index) {
-					try {
-						return new Banco().produtos().get(index);
-					} catch (Exception e) {
-						e.printStackTrace();
-						return null;
-					}
+					return p.get(index);
 				}
 			});
 			lista.setFont(new Font("Tahoma", Font.PLAIN, 45));
