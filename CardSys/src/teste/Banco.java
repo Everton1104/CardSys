@@ -9,20 +9,39 @@ import java.util.ArrayList;
 
 public class Banco {
 	
+	@SuppressWarnings("resource")
 	public void add(String nome_produto, String cliente_id, String qtde) throws SQLException {
 		String url = "jdbc:mysql://127.0.0.1/banco_cardsys";
 		String user = "root";
 		String password = "root";
 		Connection conexao = DriverManager.getConnection(url, user, password);
+		
 		PreparedStatement ps;
 		ResultSet res ;
+		Integer nQtde = Integer.parseInt(qtde);
+		
+		String sql = "SELECT id FROM cartao WHERE numero = "+cliente_id+";";
+		ps = conexao.prepareStatement(sql);
+		res = ps.executeQuery();
+		res.next();
+		cliente_id = res.getString("id");
+		
 		String[] id_produto = nome_produto.split(" ");
-		System.out.println(id_produto[0]);
-		String sql = "SELECT * FROM controle WHERE id_cartao = "+cliente_id+" AND id_produto = "+id_produto[0]+";";
+		
+		sql = "SELECT * FROM controle WHERE id_cartao = "+cliente_id+" AND id_produto = "+id_produto[0]+";";
 		ps = conexao.prepareStatement(sql);
 		res = ps.executeQuery();
 		if(res.next()) {
-			//terminar
+			System.out.println("Set qtde -> "+nQtde+" cliente: "+cliente_id+" produto: "+id_produto[0]);
+			nQtde += Integer.parseInt(res.getString("qtde"));
+			sql = "UPDATE controle SET qtde = "+nQtde+" WHERE id_cartao = "+cliente_id+" AND id_produto = "+id_produto[0]+";";
+			ps = conexao.prepareStatement(sql);
+			ps.executeQuery();
+		}else {
+			System.out.println("Insert -> cliente: "+cliente_id+", produto: "+id_produto[0]+", qtde: "+nQtde);
+			sql = "INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+cliente_id+", "+id_produto[0]+", "+nQtde+");";
+			ps = conexao.prepareStatement(sql);
+			ps.executeQuery();
 		}
 	}
 	

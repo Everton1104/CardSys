@@ -33,7 +33,7 @@ public class Tela extends JFrame {
 		Cliente c = new Cliente();
 		c = b.execute(numero_id);
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//temporario - mudar quando implementar metdo construtor.
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
 		contentPane = new JPanel();
@@ -96,7 +96,7 @@ public class Tela extends JFrame {
 		contentPane.add(edt);
 	}
 	
-	public void produtos(String numero_id) throws SQLException {
+	public void produtos(String id) throws SQLException {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
@@ -146,7 +146,7 @@ public class Tela extends JFrame {
 				}else if(k!=KeyEvent.VK_BACK_SPACE && k!=KeyEvent.VK_DELETE && k==KeyEvent.VK_ENTER) {
 					String qtde = JOptionPane.showInputDialog("Quantidade de "+lista.getSelectedValue());
 					try {
-						b.add(lista.getSelectedValue(), numero_id, qtde);
+						b.add(lista.getSelectedValue(), id, qtde);
 						dispose();
 					}catch(Exception buscaErr) {buscaErr.printStackTrace();}
 				}
