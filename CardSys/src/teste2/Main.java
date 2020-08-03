@@ -9,3 +9,5 @@ public class Main {
 		catch (Exception e) {e.printStackTrace();}
 	}
 }
+
+//falto a opcao de fechar a comanda e testar depois com o arduino!
