@@ -16,8 +16,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class Tela extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -86,14 +89,35 @@ public class Tela extends JFrame {
 				}
 			}
 		});
-		add.requestFocus();
+		add.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+					try {
+						new Tela().showProdutos(cliente);
+						dispose();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+				}
+			}
+		});
 		contentPane.add(add);
 		
 		//ALTERAR
 		JButton alt = new JButton("ALTERAR");
 		alt.setBounds(320, 205, 250, 40);
 		alt.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		alt.setEnabled(false);
 		contentPane.add(alt);
+		
+		//DELETAR
+		JButton del = new JButton("DELETAR");
+		del.setBounds(590, 205, 250, 40);
+		del.setEnabled(false);
+		del.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		del.setEnabled(false);
+		contentPane.add(del);
 		
 		//LISTA DE PRODUTOS
 		ScrollPane scroll = new ScrollPane();
@@ -112,17 +136,46 @@ public class Tela extends JFrame {
 			});
 			lista.setBounds(scroll.getBounds());
 			lista.setFont(new Font("Tahoma", Font.PLAIN, 45));
+			lista.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					alt.setEnabled(true);
+					del.setEnabled(true);
+				}
+			});
+		alt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String qtde = JOptionPane.showInputDialog(null, "Valor anterior: "+lista.getSelectedValue()+"\nDigite a nova quantidade:", "ALTERAR PRODUTO", JOptionPane.OK_CANCEL_OPTION);
+				try {
+					new Banco().alt(lista.getSelectedValue(), qtde, cliente.getId());
+					dispose();
+					new Tela().showCliente(new Banco().cliente(cliente.getId()));
+				}catch(Exception e2) {e2.printStackTrace();}
+			}
+		});
+		del.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Integer opc = JOptionPane.showConfirmDialog(null, "DELETAR "+lista.getSelectedValue()+"?","DELETAR", JOptionPane.YES_NO_OPTION);
+				if(opc==JOptionPane.YES_OPTION) {
+					try {
+						new Banco().alt(lista.getSelectedValue(), "0", cliente.getId());
+						dispose();
+						new Tela().showCliente(new Banco().cliente(cliente.getId()));
+					}catch(Exception e2) {e2.printStackTrace();}
+				}
+			}
+		});
 		scroll.add(lista);
 		contentPane.add(scroll);
-		
-		
 		
 		this.setVisible(true);
 	}
 	
 	public void showProdutos(Cliente c)throws SQLException{
 		
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
 		contentPane = new JPanel();
@@ -130,16 +183,16 @@ public class Tela extends JFrame {
 		setContentPane(contentPane);
 		
 		//TITULO
-		JLabel produtos = new JLabel("PRODUTOS");
-		produtos.setBounds((d.width-250)/2, 50, 250, 50);
+		JLabel produtos = new JLabel("ADICIONAR PRODUTOS");
+		produtos.setBounds((d.width-500)/2, 50, 500, 50);
 		produtos.setFont(new Font("Tahoma", Font.PLAIN, 45));
 		contentPane.add(produtos);
 		
 		//ADICIONAR
-		JButton add = new JButton("ADICIONAR");
-		add.setEnabled(false);
-		add.setBounds((d.width-275)/2, 125, 275, 50);
-		add.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		JLabel add = new JLabel("Digite o nome do produto e pressione [ENTER] para confirmar");
+		add.setBounds(0, 125, d.width, 50);
+		add.setHorizontalAlignment(JLabel.CENTER);
+		add.setFont(new Font("Tahoma", Font.PLAIN, 40));
 		contentPane.add(add);
 		
 		//PESQUISA
@@ -147,7 +200,6 @@ public class Tela extends JFrame {
 		busca.setBounds(10, 190, d.width-20, 50);
 		busca.setFont(new Font("Tahoma", Font.PLAIN, 45));
 		contentPane.add(busca);
-		
 		
 		//LISTA DE PRODUTOS
 		ScrollPane scroll = new ScrollPane();
@@ -158,14 +210,22 @@ public class Tela extends JFrame {
 			busca.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
-					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER && !busca.getText().isBlank()) {
 						try {
-							
-							
-							System.out.println(lista.getSelectedValue());//2: Cerveja_Skol_600ml R$ 9
-							
-							
-						}catch(Exception e2) {e2.printStackTrace();}
+							String qtde = JOptionPane.showInputDialog(null, "QUANTIDADE?", lista.getSelectedValue()+"?", JOptionPane.OK_CANCEL_OPTION);
+							Integer qt = Integer.parseInt(qtde);
+							if(qt>0) {
+								new Banco().add(c.getId(), lista.getSelectedValue(), Integer.parseInt(qtde));
+								dispose();
+								new Tela().showCliente(new Banco().cliente(c.getId()));
+							}
+						}catch(Exception e2){
+							dispose();
+							JOptionPane.showConfirmDialog(null, "NAO DIGITE LETRAS EM QUANTIDADE\n SOMENTE NUMEROS!","ERRO!",JOptionPane.ERROR_MESSAGE);
+							try {
+								new Tela().showCliente(new Banco().cliente(c.getId()));
+							}catch(Exception e3) {e3.printStackTrace();}
+						}
 					}else {
 						try {	
 							ArrayList<String> p = new Banco().produtos(busca.getText().trim());
@@ -186,11 +246,15 @@ public class Tela extends JFrame {
 					}
 				}
 			});
+			lista.addListSelectionListener(new ListSelectionListener() {
+				
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					busca.requestFocus();
+				}
+			});
 			scroll.add(lista);
 		contentPane.add(scroll);
-		
-		
-		
 		this.setVisible(true);
 	}
 }

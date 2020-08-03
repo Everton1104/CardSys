@@ -24,9 +24,6 @@ public class Banco {
 		ResultSet res ;
 		String sql = "";
 		
-		Cliente cliente = new Cliente();
-		
-		//detecta o tipo de id.
 		if(Integer.parseInt(id)>1000){
 			sql = "SELECT id FROM cartao WHERE numero = "+id+";";
 			ps = this.Con().prepareStatement(sql);
@@ -44,6 +41,9 @@ public class Banco {
 				id = res.getString("id");
 			}
 		}
+		
+		Cliente cliente = new Cliente();
+		
 		sql = "SELECT * FROM cartao WHERE id= "+id+";";
 		ps = this.Con().prepareStatement(sql);
 		res = ps.executeQuery();
@@ -82,5 +82,46 @@ public class Banco {
 			lista.add(res.getString("id")+": "+res.getString("nome_produto")+" R$ "+res.getString("valor"));
 		}
 		return lista;
+	}
+	
+	public void add(String id, String produto,Integer qtde) throws SQLException{
+		
+		String[] p = produto.split(":");
+		
+		PreparedStatement ps;
+		ResultSet res ;
+		String sql = "SELECT * FROM controle WHERE id_cartao = "+id+" AND id_produto = "+p[0]+";";
+		ps = this.Con().prepareStatement(sql);
+		res = ps.executeQuery();
+		if(res.next()) {
+			sql = "UPDATE controle SET qtde = "+(Integer.parseInt(res.getString("qtde"))+qtde)+" WHERE id_cartao = "+id+" AND id_produto = "+p[0]+";";
+			ps.executeQuery(sql);
+		}else {
+			sql = "INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+id+", "+p[0]+", "+qtde+");";
+			ps = this.Con().prepareStatement(sql);
+			res = ps.executeQuery();
+		}
+	}
+	
+	public void alt(String produto, String qtde, String id)throws SQLException {
+		PreparedStatement ps;
+		ResultSet res ;
+		String[] p = produto.split(" ");
+		String sql = "SELECT * FROM produtos WHERE nome_produto LIKE '%"+p[3]+"%';";
+		ps = this.Con().prepareStatement(sql);
+		res = ps.executeQuery();
+		res.next();
+		try {
+			produto = res.getString("id");
+		}catch(Exception e) {e.printStackTrace();}
+		
+		if(Integer.parseInt(qtde) <= 0) {
+			sql = "DELETE FROM controle WHERE id_cartao = "+id+" AND id_produto = "+produto+";";
+			ps = this.Con().prepareStatement(sql);
+			ps.executeQuery();
+		}else {
+			sql = "UPDATE controle SET qtde = "+qtde+" WHERE id_cartao = "+id+" AND id_produto = "+produto+";";
+			ps.executeQuery(sql);
+		}
 	}
 }
