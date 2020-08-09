@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -32,7 +34,7 @@ public class Tela extends JFrame {
 	public void showCliente(Cliente cliente){
 		
 		//VERIFICA SE NOVO CLIENTE
-		if(cliente.getNome().contentEquals("0")) {
+		if(cliente.getNome().contentEquals("0") || cliente.getNome().isEmpty()) {
 			try {
 				cliente.setNome(JOptionPane.showInputDialog(null, "Digite o nome do cliente:", "Novo cliente", JOptionPane.OK_CANCEL_OPTION));
 				cliente.setTel(JOptionPane.showInputDialog(null, "Telefone:", "Telefone", JOptionPane.OK_CANCEL_OPTION));
@@ -44,6 +46,7 @@ public class Tela extends JFrame {
 					cliente.setTel("Sem Telefone");
 					new Banco().setDados(cliente);
 				}
+				new Banco().setDados(cliente);
 			}catch(Exception e) {e.printStackTrace();}
 		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -90,40 +93,7 @@ public class Tela extends JFrame {
 		telefone_cliente.setFont(new Font("Tahoma", Font.PLAIN, 45));
 		contentPane.add(telefone_cliente);
 		
-		//ADICIONAR
-		JButton add = new JButton("ADICIONAR");
-		add.setBounds(50, 205, 250, 40);
-		add.setFont(new Font("Tahoma", Font.PLAIN, 35));
-		add.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					new Tela().showProdutos(cliente);
-					dispose();
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-			}
-		});
-		add.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
-					try {
-						new Tela().showProdutos(cliente);
-						dispose();
-					} catch (Exception e2) {
-						e2.printStackTrace();
-					}
-				}else if(e.getKeyCode()==KeyEvent.VK_P) {
-					dispose();
-					new Tela().pagamento(cliente);
-				}
-				
-			}
-		});
-		contentPane.add(add);
+		
 		
 		//ALTERAR
 		JButton alt = new JButton("ALTERAR");
@@ -205,6 +175,51 @@ public class Tela extends JFrame {
 		scroll.add(lista);
 		contentPane.add(scroll);
 		
+		//ADICIONAR
+			JButton add = new JButton("ADICIONAR");
+			add.setBounds(50, 205, 250, 40);
+			add.setFont(new Font("Tahoma", Font.PLAIN, 35));
+			add.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try {
+						new Tela().showProdutos(cliente);
+						dispose();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+				}
+			});
+			add.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+						try {
+							new Tela().showProdutos(cliente);
+							dispose();
+						} catch (Exception e2) {
+							e2.printStackTrace();
+						}
+					}else if(e.getKeyCode()==KeyEvent.VK_P) {
+						new Tela().pagamento(cliente);
+						dispose();
+					}else if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+						lista.requestFocus();
+					}
+				}
+			});
+			lista.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					add.requestFocus();
+					if(e.getClickCount()==2) {
+						alt.doClick();
+					}
+				}
+			});
+			add.requestFocus();
+			contentPane.add(add);
+		
 		this.setVisible(true);
 	}
 	
@@ -245,21 +260,21 @@ public class Tela extends JFrame {
 			busca.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
-					if(e.getKeyCode() == KeyEvent.VK_ENTER && !busca.getText().isBlank()) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 						try {
 							String qtde = JOptionPane.showInputDialog(null, "QUANTIDADE?", lista.getSelectedValue()+"?", JOptionPane.OK_CANCEL_OPTION);
 							Integer qt = Integer.parseInt(qtde);
 							if(qt>0) {
-								new Banco().add(c.getId(), lista.getSelectedValue(), Integer.parseInt(qtde));
+								new Banco().add(c.getId(), lista.getSelectedValue(), qt);
 								dispose();
 								new Tela().showCliente(new Banco().cliente(c.getId()));
 							}
 						}catch(Exception e2){
-							dispose();
 							JOptionPane.showConfirmDialog(null, "NAO DIGITE LETRAS EM QUANTIDADE\n SOMENTE NUMEROS!","ERRO!",JOptionPane.ERROR_MESSAGE);
 							try {
-								new Tela().showCliente(c);
+								new Tela().showCliente(new Banco().cliente(c.getId()));
 							}catch(Exception e3) {e3.printStackTrace();}
+							dispose();
 						}
 					}else {
 						try {	
@@ -282,12 +297,15 @@ public class Tela extends JFrame {
 				}
 			});
 			lista.addListSelectionListener(new ListSelectionListener() {
-				
-				
-				
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
 					busca.requestFocus();
+					lista.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							busca.requestFocus();
+						}
+					});
 				}
 			});
 			scroll.add(lista);
@@ -324,7 +342,7 @@ public class Tela extends JFrame {
 			val += Integer.parseInt(p[1]) * Float.parseFloat(p[5]);
 		}
 		
-		JLabel valor = new JLabel(val.toString());
+		JLabel valor = new JLabel("R$ "+val.toString());
 		valor.setBounds(220, 75, 1000, 70);
 		valor.setFont(new Font("Tahoma", Font.PLAIN, 50));
 		valor.setForeground(Color.ORANGE);
@@ -347,7 +365,9 @@ public class Tela extends JFrame {
 						}catch(Exception e2) {e2.printStackTrace();}
 					}else {
 						dispose();
-						new Tela().showCliente(c);
+						try {
+							new Tela().showCliente(new Banco().cliente(c.getId()));
+						}catch(Exception e2) {e2.printStackTrace();}
 					}
 				}
 			}
@@ -363,7 +383,9 @@ public class Tela extends JFrame {
 					}catch(Exception e2) {e2.printStackTrace();}
 				}else {
 					dispose();
-					new Tela().showCliente(c);
+					try {
+						new Tela().showCliente(new Banco().cliente(c.getId()));
+					}catch(Exception e2) {e2.printStackTrace();}
 				}
 			}
 		});
@@ -378,7 +400,9 @@ public class Tela extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new Tela().showCliente(c);
+				try {
+					new Tela().showCliente(new Banco().cliente(c.getId()));
+				}catch(Exception e2) {e2.printStackTrace();}
 			}
 		});
 		contentPane.add(cancelar);

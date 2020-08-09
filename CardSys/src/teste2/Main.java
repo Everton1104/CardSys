@@ -9,7 +9,7 @@ public class Main {
 				new Tela().showCliente(new Banco().cliente(JOptionPane.showInputDialog("id")));
 			//}
 		} 
-		catch (Exception e) {Main.main(null);}
+		catch (Exception e) {e.printStackTrace();}
 	}
 }
 
