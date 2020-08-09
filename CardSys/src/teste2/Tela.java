@@ -286,7 +286,7 @@ public class Tela extends JFrame {
 						}catch(Exception e2){
 							JOptionPane.showConfirmDialog(null, "NAO DIGITE LETRAS EM QUANTIDADE\n SOMENTE NUMEROS!","ERRO!",JOptionPane.ERROR_MESSAGE);
 							try {
-								new Tela().showCliente(new Banco().cliente(c.getId()));
+								new Tela().showProdutos(c);
 							}catch(Exception e3) {e3.printStackTrace();}
 							dispose();
 						}

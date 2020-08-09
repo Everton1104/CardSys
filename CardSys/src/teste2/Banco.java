@@ -140,10 +140,13 @@ public class Banco {
 	
 	public void pag(Cliente c) {
 		try {
-			String sql = "UPDATE cartao SET nome = 0 WHERE id = "+c.getId()+"";
+			String sql = "UPDATE cartao SET nome = 0 WHERE id = "+c.getId()+";";
 			PreparedStatement ps = this.Con().prepareStatement(sql);
 			ps.executeQuery();
-			sql = "UPDATE cartao SET telefone = 0 WHERE id = "+c.getId()+"";
+			sql = "UPDATE cartao SET telefone = 0 WHERE id = "+c.getId()+";";
+			ps = this.Con().prepareStatement(sql);
+			ps.executeQuery();
+			sql = "DELETE FROM controle WHERE id_cartao = "+c.getId()+";";
 			ps = this.Con().prepareStatement(sql);
 			ps.executeQuery();
 		}catch(Exception e) {e.printStackTrace();}
