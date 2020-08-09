@@ -219,7 +219,7 @@ public class Tela extends JFrame {
 			});
 			add.requestFocus();
 			contentPane.add(add);
-		
+		//arrumar seta para baixo e fazer navegacao sem mouse
 		this.setVisible(true);
 	}
 	
