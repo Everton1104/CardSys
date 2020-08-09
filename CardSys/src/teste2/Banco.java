@@ -24,7 +24,7 @@ public class Banco {
 		ResultSet res ;
 		String sql = "";
 		
-		if(Integer.parseInt(id)>1000){
+		if(Integer.parseInt(id)>10000){
 			sql = "SELECT id FROM cartao WHERE numero = "+id+";";
 			ps = this.Con().prepareStatement(sql);
 			res = ps.executeQuery();
@@ -44,12 +44,12 @@ public class Banco {
 		
 		Cliente cliente = new Cliente();
 		
-		sql = "SELECT * FROM cartao WHERE id= "+id+";";
+		sql = "SELECT * FROM cartao WHERE id = "+id+";";
 		ps = this.Con().prepareStatement(sql);
 		res = ps.executeQuery();
 		res.next();
 		
-		//dados do cliente.
+		//dados do cliente
 		cliente.setId(res.getString("id"));
 		cliente.setNome(res.getString("nome"));
 		cliente.setTel(res.getString("telefone"));
@@ -65,10 +65,9 @@ public class Banco {
 			lista.add(res.getString("id")+": "+res.getString("qtde")+" X "+res.getString("nome")+" R$ "+Float.parseFloat(res.getString("valor")));
 		}
 		cliente.setProdutos(lista);
-		System.out.println(lista);
 		return cliente;
 	}	
-	
+
 	public ArrayList<String> produtos(String busca)throws SQLException{
 		
 		PreparedStatement ps;
@@ -84,9 +83,20 @@ public class Banco {
 		return lista;
 	}
 	
+	public void setDados(Cliente c) throws SQLException{
+		PreparedStatement ps;
+		String sql = "UPDATE cartao SET nome = '"+c.getNome()+"' WHERE id = "+c.getId()+";";
+		ps = this.Con().prepareStatement(sql);
+		ps.executeQuery();
+		sql = "UPDATE cartao SET telefone = '"+c.getTel()+"' WHERE id = "+c.getId()+";";
+		ps = this.Con().prepareStatement(sql);
+		ps.executeQuery();
+	}
+	
 	public void add(String id, String produto,Integer qtde) throws SQLException{
 		
 		String[] p = produto.split(":");
+		
 		
 		PreparedStatement ps;
 		ResultSet res ;
@@ -113,15 +123,28 @@ public class Banco {
 		res.next();
 		try {
 			produto = res.getString("id");
-		}catch(Exception e) {e.printStackTrace();}
-		
-		if(Integer.parseInt(qtde) <= 0) {
-			sql = "DELETE FROM controle WHERE id_cartao = "+id+" AND id_produto = "+produto+";";
+		}catch(Exception e) {System.out.println("ERRO!:nao foi encontrado nenhum produto.");return;}
+		try {
+			Integer intQtde = Integer.parseInt(qtde);
+			if(intQtde <= 0 && intQtde != null) {
+				sql = "DELETE FROM controle WHERE id_cartao = "+id+" AND id_produto = "+produto+";";
+				ps = this.Con().prepareStatement(sql);
+				ps.executeQuery();
+			}else if(intQtde != null){
+				sql = "UPDATE controle SET qtde = "+qtde+" WHERE id_cartao = "+id+" AND id_produto = "+produto+";";
+				ps.executeQuery(sql);
+			}
+		}catch(Exception e) {return;}
+	}
+	
+	public void pag(Cliente c) {
+		try {
+			String sql = "DELETE FROM controle WHERE id_cartao = "+c.getId()+";";
+			PreparedStatement ps = this.Con().prepareStatement(sql);
+			ps.executeQuery();
+			sql = "UPDATE cartao SET nome = 0 AND telefone = 0 WHERE id = "+c.getId()+"";
 			ps = this.Con().prepareStatement(sql);
 			ps.executeQuery();
-		}else {
-			sql = "UPDATE controle SET qtde = "+qtde+" WHERE id_cartao = "+id+" AND id_produto = "+produto+";";
-			ps.executeQuery(sql);
-		}
+		}catch(Exception e) {e.printStackTrace();}
 	}
 }

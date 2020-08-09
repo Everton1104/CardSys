@@ -7,6 +7,18 @@ public class Cliente {
 	private String nome;
 	private String tel;
 	private ArrayList<String> produtos = new ArrayList<>();
+	
+	@Override
+	public String toString() {
+		System.out.println("Id: "+id);
+		System.out.println("Nome: "+nome);
+		System.out.println("Telefone: "+tel);
+		System.out.println("---Lista de produtos de "+nome+"---");
+		for (String produto : produtos) {
+			System.out.println(produto);
+		}
+		return "";
+	}
 
 	public String getId() {
 		return id;
