@@ -33,11 +33,26 @@ public class Tela extends JFrame {
 	
 	public void showCliente(Cliente cliente){
 		
+		if(cliente == null) {
+			JOptionPane.showConfirmDialog(null, "Numero de cartao nao existe!","Erro!", JOptionPane.OK_CANCEL_OPTION);
+			new Tela().showCliente(new Banco().cliente(JOptionPane.showInputDialog("id")));
+		}
+		
 		//VERIFICA SE NOVO CLIENTE
 		if(cliente.getNome().contentEquals("0") || cliente.getNome().isEmpty()) {
 			try {
 				cliente.setNome(JOptionPane.showInputDialog(null, "Digite o nome do cliente:", "Novo cliente", JOptionPane.OK_CANCEL_OPTION));
-				cliente.setTel(JOptionPane.showInputDialog(null, "Telefone:", "Telefone", JOptionPane.OK_CANCEL_OPTION));
+				String tel = JOptionPane.showInputDialog(null,"Telefone (somente numeros com DDD):", "Telefone", JOptionPane.OK_CANCEL_OPTION);
+				if(tel.length()==11) {
+					tel = new FormatString().fs(tel, "(##) # ####-####");
+				}else if(tel.length()==10){
+					tel = new FormatString().fs(tel, "(##) ####-####");
+				}else if(tel.length()==9) {
+					tel = new FormatString().fs(tel, "# ####-####");
+				}else {
+					tel = new FormatString().fs(tel, "####-####");
+				}
+				cliente.setTel(tel);
 				if(cliente.getNome().isEmpty()) {
 					cliente.setNome("Sem Nome");
 					new Banco().setDados(cliente);
@@ -219,7 +234,6 @@ public class Tela extends JFrame {
 			});
 			add.requestFocus();
 			contentPane.add(add);
-		//arrumar seta para baixo e fazer navegacao sem mouse
 		this.setVisible(true);
 	}
 	

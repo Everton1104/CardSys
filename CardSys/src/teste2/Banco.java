@@ -18,54 +18,55 @@ public class Banco {
 		return con;
 	}
 	
-	public Cliente cliente(String id) throws SQLException {
-		
-		PreparedStatement ps;
-		ResultSet res ;
-		String sql = "";
-		
-		if(Integer.parseInt(id)>10000){
-			sql = "SELECT id FROM cartao WHERE numero = "+id+";";
-			ps = this.Con().prepareStatement(sql);
-			res = ps.executeQuery();
-			if(res.next()) {
-				id = res.getString("id");
-			}else {
-				sql = "INSERT INTO cartao (numero) VALUES ("+id+");";
-				ps = this.Con().prepareStatement(sql);
-				res = ps.executeQuery();
+	public Cliente cliente(String id){
+		try {
+			PreparedStatement ps;
+			ResultSet res ;
+			String sql = "";
+			
+			if(Integer.parseInt(id)>10000){
 				sql = "SELECT id FROM cartao WHERE numero = "+id+";";
 				ps = this.Con().prepareStatement(sql);
 				res = ps.executeQuery();
-				res.next();
-				id = res.getString("id");
+				if(res.next()) {
+					id = res.getString("id");
+				}else {
+					sql = "INSERT INTO cartao (numero) VALUES ("+id+");";
+					ps = this.Con().prepareStatement(sql);
+					res = ps.executeQuery();
+					sql = "SELECT id FROM cartao WHERE numero = "+id+";";
+					ps = this.Con().prepareStatement(sql);
+					res = ps.executeQuery();
+					res.next();
+					id = res.getString("id");
+				}
 			}
-		}
-		
-		Cliente cliente = new Cliente();
-		
-		sql = "SELECT * FROM cartao WHERE id = "+id+";";
-		ps = this.Con().prepareStatement(sql);
-		res = ps.executeQuery();
-		res.next();
-		
-		//dados do cliente
-		cliente.setId(res.getString("id"));
-		cliente.setNome(res.getString("nome"));
-		cliente.setTel(res.getString("telefone"));
-		
-		//lista de produtos do cliente
-		sql = "SELECT produtos.id, produtos.nome_produto AS nome, controle.qtde ,produtos.valor FROM controle " + 
-				" LEFT JOIN produtos ON id_produto = produtos.id " + 
-				" WHERE id_cartao = "+id+";";
-		ArrayList<String> lista = new ArrayList<>();
-		ps = this.Con().prepareStatement(sql);
-		res = ps.executeQuery();
-		while(res.next()) {
-			lista.add(res.getString("id")+": "+res.getString("qtde")+" X "+res.getString("nome")+" R$ "+Float.parseFloat(res.getString("valor")));
-		}
-		cliente.setProdutos(lista);
-		return cliente;
+			
+			Cliente cliente = new Cliente();
+			
+			sql = "SELECT * FROM cartao WHERE id = "+id+";";
+			ps = this.Con().prepareStatement(sql);
+			res = ps.executeQuery();
+			res.next();
+			
+			//dados do cliente
+			cliente.setId(res.getString("id"));
+			cliente.setNome(res.getString("nome"));
+			cliente.setTel(res.getString("telefone"));
+			
+			//lista de produtos do cliente
+			sql = "SELECT produtos.id, produtos.nome_produto AS nome, controle.qtde ,produtos.valor FROM controle " + 
+					" LEFT JOIN produtos ON id_produto = produtos.id " + 
+					" WHERE id_cartao = "+id+";";
+			ArrayList<String> lista = new ArrayList<>();
+			ps = this.Con().prepareStatement(sql);
+			res = ps.executeQuery();
+			while(res.next()) {
+				lista.add(res.getString("id")+": "+res.getString("qtde")+" X "+res.getString("nome")+" R$ "+Float.parseFloat(res.getString("valor")));
+			}
+			cliente.setProdutos(lista);
+			return cliente;
+		}catch(Exception e) {return null;}
 	}	
 
 	public ArrayList<String> produtos(String busca)throws SQLException{
@@ -139,10 +140,10 @@ public class Banco {
 	
 	public void pag(Cliente c) {
 		try {
-			String sql = "DELETE FROM controle WHERE id_cartao = "+c.getId()+";";
+			String sql = "UPDATE cartao SET nome = 0 WHERE id = "+c.getId()+"";
 			PreparedStatement ps = this.Con().prepareStatement(sql);
 			ps.executeQuery();
-			sql = "UPDATE cartao SET nome = 0 AND telefone = 0 WHERE id = "+c.getId()+"";
+			sql = "UPDATE cartao SET telefone = 0 WHERE id = "+c.getId()+"";
 			ps = this.Con().prepareStatement(sql);
 			ps.executeQuery();
 		}catch(Exception e) {e.printStackTrace();}
