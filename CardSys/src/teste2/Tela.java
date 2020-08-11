@@ -26,16 +26,35 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class Tela extends JFrame {
+	
 	private static final long serialVersionUID = 1L;
 	
 	private JPanel contentPane;
 	Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 	
+	public void inicio() {
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setExtendedState(MAXIMIZED_BOTH);
+		setUndecorated(true);
+		contentPane = new JPanel();
+		contentPane.setLayout(null);
+		setContentPane(contentPane);
+		
+		//TITULO
+		JLabel inicio = new JLabel("INICIO");
+		inicio.setBounds((d.width-250)/2, 50, 500, 50);
+		inicio.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		contentPane.add(inicio);
+		
+		this.setVisible(true);
+	}
+	
 	public void showCliente(Cliente cliente){
 		
 		if(cliente == null) {
 			JOptionPane.showConfirmDialog(null, "Numero de cartao nao existe!","Erro!", JOptionPane.OK_CANCEL_OPTION);
-			new Tela().showCliente(new Banco().cliente(JOptionPane.showInputDialog("id")));
+			new Tela().showCliente(new Banco().cliente(new Arduino().ler()));
 		}
 		
 		//VERIFICA SE NOVO CLIENTE
@@ -64,7 +83,7 @@ public class Tela extends JFrame {
 				new Banco().setDados(cliente);
 			}catch(Exception e) {e.printStackTrace();}
 		}
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
 		contentPane = new JPanel();
@@ -130,6 +149,7 @@ public class Tela extends JFrame {
 		JButton pag = new JButton("PAGAR");
 		pag.setBounds(860, 205, 250, 40);
 		pag.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		pag.setForeground(Color.GREEN);
 		pag.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -239,7 +259,7 @@ public class Tela extends JFrame {
 	
 	public void showProdutos(Cliente c)throws SQLException{
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
 		contentPane = new JPanel();
@@ -253,7 +273,7 @@ public class Tela extends JFrame {
 		contentPane.add(produtos);
 		
 		//ADICIONAR
-		JLabel add = new JLabel("Digite o nome do produto e pressione [ENTER] para confirmar");
+		JLabel add = new JLabel("[ENTER] para confirmar ou [ESC] para cancelar");
 		add.setBounds(0, 125, d.width, 50);
 		add.setHorizontalAlignment(JLabel.CENTER);
 		add.setFont(new Font("Tahoma", Font.PLAIN, 40));
@@ -274,7 +294,10 @@ public class Tela extends JFrame {
 			busca.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
-					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+						dispose();
+						new Tela().showCliente(new Banco().cliente(c.getId()));
+					}else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 						try {
 							String qtde = JOptionPane.showInputDialog(null, "QUANTIDADE?", lista.getSelectedValue()+"?", JOptionPane.OK_CANCEL_OPTION);
 							Integer qt = Integer.parseInt(qtde);
@@ -329,11 +352,12 @@ public class Tela extends JFrame {
 	
 	public void pagamento(Cliente c) {
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds((d.width/2)-512, 50, 1024, 768);
 		setResizable(false);
 		setUndecorated(true);
 		contentPane = new JPanel();
+		contentPane.setBackground(Color.GRAY);
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
 		
@@ -375,7 +399,7 @@ public class Tela extends JFrame {
 						new Banco().pag(c);
 						dispose();
 						try {
-							new Tela().showCliente(new Banco().cliente(JOptionPane.showInputDialog("id")));
+							new Tela().showCliente(new Banco().cliente(new Arduino().ler()));
 						}catch(Exception e2) {e2.printStackTrace();}
 					}else {
 						dispose();
@@ -393,7 +417,7 @@ public class Tela extends JFrame {
 					new Banco().pag(c);
 					dispose();
 					try {
-						new Tela().showCliente(new Banco().cliente(JOptionPane.showInputDialog("id")));
+						new Tela().showCliente(new Banco().cliente(new Arduino().ler()));
 					}catch(Exception e2) {e2.printStackTrace();}
 				}else {
 					dispose();
