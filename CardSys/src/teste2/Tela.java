@@ -28,7 +28,6 @@ import javax.swing.event.ListSelectionListener;
 public class Tela extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
-	
 	private JPanel contentPane;
 	Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 	
@@ -55,14 +54,11 @@ public class Tela extends JFrame {
 		setVisible(true);
 		
 		while(true) {
-			
 			showCliente(new Banco().cliente(new Arduino().ler()));
 		}
 	}
 	
 	public void showCliente(Cliente cliente){
-		
-		dispose();
 		
 		if(cliente == null) {
 			JOptionPane.showConfirmDialog(null, "Cliente nao encontrado!","Erro!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
@@ -93,6 +89,9 @@ public class Tela extends JFrame {
 				new Banco().setDados(cliente);
 			}catch(Exception e) {e.printStackTrace();}
 		}
+		
+		dispose();
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
@@ -137,8 +136,6 @@ public class Tela extends JFrame {
 		telefone_cliente.setFont(new Font("Tahoma", Font.PLAIN, 45));
 		contentPane.add(telefone_cliente);
 		
-		
-		
 		//ALTERAR
 		JButton alt = new JButton("ALTERAR");
 		alt.setBounds(320, 205, 250, 40);
@@ -163,8 +160,9 @@ public class Tela extends JFrame {
 		pag.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Tela().pagamento(cliente);
 				dispose();
+				pagamento(cliente);
+				return;
 			}
 		});
 		contentPane.add(pag);
@@ -200,7 +198,8 @@ public class Tela extends JFrame {
 				try {
 					new Banco().alt(lista.getSelectedValue(), qtde, cliente.getId());
 					dispose();
-					new Tela().showCliente(new Banco().cliente(cliente.getId()));
+					showCliente(new Banco().cliente(cliente.getId()));
+					return;
 				}catch(Exception e2) {e2.printStackTrace();}
 			}
 		});
@@ -212,7 +211,8 @@ public class Tela extends JFrame {
 					try {
 						new Banco().alt(lista.getSelectedValue(), "0", cliente.getId());
 						dispose();
-						new Tela().showCliente(new Banco().cliente(cliente.getId()));
+						showCliente(new Banco().cliente(cliente.getId()));
+						return;
 					}catch(Exception e2) {e2.printStackTrace();}
 				}
 			}
@@ -228,8 +228,9 @@ public class Tela extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						new Tela().showProdutos(cliente);
 						dispose();
+						showProdutos(cliente);
+						return;
 					} catch (Exception e2) {
 						e2.printStackTrace();
 					}
@@ -240,14 +241,16 @@ public class Tela extends JFrame {
 				public void keyPressed(KeyEvent e) {
 					if(e.getKeyCode()==KeyEvent.VK_ENTER) {
 						try {
-							new Tela().showProdutos(cliente);
 							dispose();
+							showProdutos(cliente);
+							return;
 						} catch (Exception e2) {
 							e2.printStackTrace();
 						}
 					}else if(e.getKeyCode()==KeyEvent.VK_P) {
-						new Tela().pagamento(cliente);
 						dispose();
+						pagamento(cliente);
+						return;
 					}else if(e.getKeyCode()==KeyEvent.VK_DOWN) {
 						lista.requestFocus();
 					}
@@ -268,6 +271,8 @@ public class Tela extends JFrame {
 	}
 	
 	public void showProdutos(Cliente c)throws SQLException{
+		
+		dispose();
 		
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
@@ -306,7 +311,8 @@ public class Tela extends JFrame {
 				public void keyPressed(KeyEvent e) {
 					if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						dispose();
-						new Tela().showCliente(new Banco().cliente(c.getId()));
+						showCliente(new Banco().cliente(c.getId()));
+						return;
 					}else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 						try {
 							String qtde = JOptionPane.showInputDialog(null, "QUANTIDADE?", lista.getSelectedValue()+"?", JOptionPane.OK_CANCEL_OPTION);
@@ -314,12 +320,15 @@ public class Tela extends JFrame {
 							if(qt>0) {
 								new Banco().add(c.getId(), lista.getSelectedValue(), qt);
 								dispose();
-								new Tela().showCliente(new Banco().cliente(c.getId()));
+								showCliente(new Banco().cliente(c.getId()));
+								return;
 							}
 						}catch(Exception e2){
 							JOptionPane.showConfirmDialog(null, "NAO DIGITE LETRAS EM QUANTIDADE\n SOMENTE NUMEROS!","ERRO!",JOptionPane.ERROR_MESSAGE);
 							try {
-								new Tela().showProdutos(c);
+								dispose();
+								showProdutos(c);
+								return;
 							}catch(Exception e3) {e3.printStackTrace();}
 							dispose();
 						}
@@ -361,6 +370,8 @@ public class Tela extends JFrame {
 	}
 	
 	public void pagamento(Cliente c) {
+		
+		dispose();
 		
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds((d.width/2)-512, 50, 1024, 768);
@@ -414,7 +425,8 @@ public class Tela extends JFrame {
 					}else {
 						dispose();
 						try {
-							new Tela().showCliente(new Banco().cliente(c.getId()));
+							showCliente(new Banco().cliente(c.getId()));
+							return;
 						}catch(Exception e2) {e2.printStackTrace();}
 					}
 				}
@@ -432,7 +444,8 @@ public class Tela extends JFrame {
 				}else {
 					dispose();
 					try {
-						new Tela().showCliente(new Banco().cliente(c.getId()));
+						showCliente(new Banco().cliente(c.getId()));
+						return;
 					}catch(Exception e2) {e2.printStackTrace();}
 				}
 			}
@@ -449,7 +462,8 @@ public class Tela extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 				try {
-					new Tela().showCliente(new Banco().cliente(c.getId()));
+					showCliente(new Banco().cliente(c.getId()));
+					return;
 				}catch(Exception e2) {e2.printStackTrace();}
 			}
 		});
