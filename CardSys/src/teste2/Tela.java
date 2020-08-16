@@ -55,6 +55,7 @@ public class Tela extends JFrame {
 		setVisible(true);
 		
 		while(true) {
+			
 			showCliente(new Banco().cliente(new Arduino().ler()));
 		}
 	}
@@ -85,11 +86,9 @@ public class Tela extends JFrame {
 				cliente.setTel(tel);
 				if(cliente.getNome().isEmpty()) {
 					cliente.setNome("Sem Nome");
-					new Banco().setDados(cliente);
 				}
 				if(cliente.getTel().isEmpty()) {
 					cliente.setTel("Sem Telefone");
-					new Banco().setDados(cliente);
 				}
 				new Banco().setDados(cliente);
 			}catch(Exception e) {e.printStackTrace();}
