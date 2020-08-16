@@ -1,4 +1,4 @@
-package teste2;
+package CardSys;
 
 public class Main {
 	
