@@ -12,7 +12,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jSerialComm-2.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/jSerialComm-2.6.2.jar" sourcepath="lib/Fazecast-jSerialComm-v2.6.2-0-g3d4c7d7.zip"/>
 	<classpathentry kind="lib" path="lib/mariadb-java-client-2.6.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>

@@ -34,6 +34,11 @@ public class Tela extends JFrame {
 	
 	public void inicio() {
 		
+		if(!new Banco().getConexao()) {
+			JOptionPane.showConfirmDialog(null, "Falha no Banco de dados","Erro Banco de dados!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
@@ -42,19 +47,25 @@ public class Tela extends JFrame {
 		setContentPane(contentPane);
 		
 		//TITULO
-		JLabel inicio = new JLabel("INICIO");
-		inicio.setBounds((d.width-250)/2, 50, 500, 50);
-		inicio.setFont(new Font("Tahoma", Font.PLAIN, 45));
-		contentPane.add(inicio);
+		JLabel titulo = new JLabel("INICIO");
+		titulo.setBounds((d.width-250)/2, (d.height-80)/2, 250, 80);
+		titulo.setFont(new Font("Tahoma", Font.PLAIN, 80));
+		contentPane.add(titulo);
 		
-		this.setVisible(true);
+		setVisible(true);
+		
+		while(true) {
+			showCliente(new Banco().cliente(new Arduino().ler()));
+		}
 	}
 	
 	public void showCliente(Cliente cliente){
 		
+		dispose();
+		
 		if(cliente == null) {
-			JOptionPane.showConfirmDialog(null, "Numero de cartao nao existe!","Erro!", JOptionPane.OK_CANCEL_OPTION);
-			new Tela().showCliente(new Banco().cliente(new Arduino().ler()));
+			JOptionPane.showConfirmDialog(null, "Cliente nao encontrado!","Erro!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		
 		//VERIFICA SE NOVO CLIENTE
@@ -83,7 +94,7 @@ public class Tela extends JFrame {
 				new Banco().setDados(cliente);
 			}catch(Exception e) {e.printStackTrace();}
 		}
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
 		contentPane = new JPanel();
@@ -254,7 +265,7 @@ public class Tela extends JFrame {
 			});
 			add.requestFocus();
 			contentPane.add(add);
-		this.setVisible(true);
+			this.setVisible(true);
 	}
 	
 	public void showProdutos(Cliente c)throws SQLException{
@@ -399,7 +410,7 @@ public class Tela extends JFrame {
 						new Banco().pag(c);
 						dispose();
 						try {
-							new Tela().showCliente(new Banco().cliente(new Arduino().ler()));
+							return;
 						}catch(Exception e2) {e2.printStackTrace();}
 					}else {
 						dispose();
@@ -417,7 +428,7 @@ public class Tela extends JFrame {
 					new Banco().pag(c);
 					dispose();
 					try {
-						new Tela().showCliente(new Banco().cliente(new Arduino().ler()));
+						return;
 					}catch(Exception e2) {e2.printStackTrace();}
 				}else {
 					dispose();

@@ -9,6 +9,17 @@ import java.util.ArrayList;
 
 public class Banco {
 	
+	public boolean getConexao() {
+		try {
+			String sql = "SHOW DATABASES;";
+			PreparedStatement ps = Con().prepareStatement(sql);
+			ps.executeQuery();
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
+	}
+	
 	public Connection Con() throws SQLException{
 		
 		String url = "jdbc:mysql://127.0.0.1/banco_cardsys";

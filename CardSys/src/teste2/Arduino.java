@@ -1,13 +1,11 @@
 package teste2;
 import java.io.InputStream;
-
 import com.fazecast.jSerialComm.SerialPort;
 
 public class Arduino {
 
 	public String ler(){
 		try {
-//			SerialPort comPort = SerialPort.getCommPorts()[0];
 			SerialPort comPort = SerialPort.getCommPort("COM7");
 			comPort.setBaudRate(9600);
 			comPort.openPort();
@@ -22,8 +20,8 @@ public class Arduino {
 			System.out.println("Arduino: "+res);
 			return res.trim();
 		} catch (Exception e) {
-			System.out.println("Erro! Arduino.");
-			return null;
+			System.out.println("Arduino: Erro de leitura.");
+			return null; 
 		}
 	}
 }
