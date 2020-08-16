@@ -374,8 +374,7 @@ public class Tela extends JFrame {
 		dispose();
 		
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		setBounds((d.width/2)-512, 50, 1024, 768);
-		setResizable(false);
+		setExtendedState(MAXIMIZED_BOTH);
 		setUndecorated(true);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.GRAY);
@@ -384,7 +383,7 @@ public class Tela extends JFrame {
 		
 		//TITULO
 		JLabel produtos = new JLabel("RESUMO");
-		produtos.setBounds((this.getWidth()/2)-75, 5, 150, 60);
+		produtos.setBounds((d.width/2)-75, 5, 150, 60);
 		produtos.setFont(new Font("Tahoma", Font.PLAIN, 35));
 		contentPane.add(produtos);
 		
