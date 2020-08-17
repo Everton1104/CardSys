@@ -51,6 +51,24 @@ public class Tela extends JFrame {
 		titulo.setFont(new Font("Tahoma", Font.PLAIN, 80));
 		contentPane.add(titulo);
 		
+		//CADASTRO
+		JTextField cad =  new JTextField();
+		cad.setBounds(10, -100, 250, 50);
+		cad.setFont(new Font("Tahoma", Font.PLAIN, 60));
+		cad.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(cad.getText().toLowerCase().contentEquals("cadastro")) {
+					try {
+						cadastro();
+					} catch (SQLException e1) {e1.printStackTrace();}
+					return;
+				}
+			}
+		});
+		contentPane.add(cad);
+		cad.requestFocus();
+		
 		setVisible(true);
 		
 		while(true) {
@@ -166,6 +184,19 @@ public class Tela extends JFrame {
 			}
 		});
 		contentPane.add(pag);
+		
+		//SAIR
+		JButton sair = new JButton("SAIR");
+		sair.setBounds(1135, 205, 250, 40);
+		sair.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		sair.setForeground(Color.RED);
+		sair.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		contentPane.add(sair);
 		
 		//LISTA DE PRODUTOS
 		ScrollPane scroll = new ScrollPane();
@@ -490,4 +521,133 @@ public class Tela extends JFrame {
 		
 		this.setVisible(true);
 	}
+	
+	public void cadastro() throws SQLException {
+	
+	dispose();
+	
+	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	setExtendedState(MAXIMIZED_BOTH);
+	setUndecorated(true);
+	contentPane = new JPanel();
+	contentPane.setLayout(null);
+	setContentPane(contentPane);
+	
+	//ALTERAR
+	JButton alt = new JButton("ALTERAR");
+	alt.setBounds(320, 205, 250, 40);
+	alt.setFont(new Font("Tahoma", Font.PLAIN, 35));
+	alt.setForeground(Color.ORANGE);
+	alt.setEnabled(false);
+	contentPane.add(alt);
+	
+	//DELETAR
+	JButton del = new JButton("DELETAR");
+	del.setBounds(590, 205, 250, 40);
+	del.setFont(new Font("Tahoma", Font.PLAIN, 35));
+	del.setForeground(Color.RED);
+	del.setEnabled(false);
+	contentPane.add(del);
+	
+	//SAIR
+	JButton sair = new JButton("SAIR");
+	sair.setBounds(1135, 205, 250, 40);
+	sair.setFont(new Font("Tahoma", Font.PLAIN, 35));
+	sair.setForeground(Color.RED);
+	sair.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.exit(0);
+		}
+	});
+	contentPane.add(sair);
+	
+	//LISTA DE PRODUTOS
+	ScrollPane scroll = new ScrollPane();
+	scroll.setBounds(10, 250, d.width-20, d.height-260);
+	ArrayList<String> p = new Banco().produtos("");
+	System.out.println(p);
+		JList<String> lista = new JList<>(new AbstractListModel<>() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public int getSize() {
+				return p.size();
+			}
+			@Override
+			public String getElementAt(int index) {
+				return p.get(index);
+			}
+		});
+		lista.setBounds(scroll.getBounds());
+		lista.setFont(new Font("Tahoma", Font.PLAIN, 45));
+		lista.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				alt.setEnabled(true);
+				del.setEnabled(true);
+			}
+		});
+	alt.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//criar input de novo nome e valor(deixar nome ja escrita caso queira alterar somente o valor).
+		}
+	});
+	del.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//deletar produto selecionado(ver no codigo acima como resgatar esse valor).
+		}
+	});
+	scroll.add(lista);
+	contentPane.add(scroll);
+	
+	//ADICIONAR
+		JButton add = new JButton("ADICIONAR");
+		add.setBounds(50, 205, 250, 40);
+		add.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		add.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//utilizar metodo ja criado cadastrar e fazer campos para nome e preco.
+			}
+		});
+		add.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+					//utilizar metodo ja criado cadastrar e fazer campos para nome e preco.
+				}
+			}
+		});
+		lista.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				add.requestFocus();
+				if(e.getClickCount()==2) {
+					alt.doClick();
+				}
+			}
+		});
+		add.requestFocus();
+		contentPane.add(add);
+
+		setVisible(true);
+	}
+	
+	public void cadastrar(String nome, String preco) {
+		nome = nome.replaceAll(" ", "_");
+		nome = nome.replaceAll(":", "-");
+		preco = preco.trim();
+		preco = preco.replaceAll(",", ".");
+		try {
+			float p = Float.parseFloat(preco);
+			new Banco().cadastrar(nome, p);
+			System.exit(0);
+		}catch(Exception e) {
+			JOptionPane.showConfirmDialog(null, "Valor digitado esta incorreto!", "Falha no Banco de dados", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+	}
+	
 }

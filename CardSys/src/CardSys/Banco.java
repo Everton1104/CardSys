@@ -162,4 +162,12 @@ public class Banco {
 			ps.executeQuery();
 		}catch(Exception e) {e.printStackTrace();}
 	}
+
+	public void cadastrar(String nome, float p) {
+		try {
+			String sql = "INSERT INTO produtos (nome_produto, valor) VALUES ('"+nome+"', "+p+");";
+			PreparedStatement ps = Con().prepareStatement(sql);
+			ps.executeQuery();
+		}catch(Exception e) {e.printStackTrace();}
+	}
 }
