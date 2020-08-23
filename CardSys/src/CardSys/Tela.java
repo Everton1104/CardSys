@@ -61,7 +61,7 @@ public class Tela extends JFrame {
 				if(cad.getText().toLowerCase().contentEquals("cadastro")) {
 					try {
 						cadastro();
-					} catch (SQLException e1) {e1.printStackTrace();}
+					} catch (Exception e1) {e1.printStackTrace();}
 					return;
 				}
 			}
@@ -337,6 +337,7 @@ public class Tela extends JFrame {
 			JList<String> lista = new JList<>();
 			lista.setFont(new Font("Tahoma", Font.PLAIN, 45));
 			lista.setBounds(scroll.getBounds());
+			lista.setModel(getModelo(""));
 			busca.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
@@ -374,7 +375,8 @@ public class Tela extends JFrame {
 								}
 								@Override
 								public String getElementAt(int index) {
-									return p.get(index);
+									String[] s = p.get(index).split(":");
+									return s[1];
 								}
 							};
 							lista.setModel(modelo);
@@ -522,7 +524,7 @@ public class Tela extends JFrame {
 		this.setVisible(true);
 	}
 	
-	public void cadastro() throws SQLException {
+	public void cadastro() {
 	
 	dispose();
 	
@@ -565,19 +567,8 @@ public class Tela extends JFrame {
 	//LISTA DE PRODUTOS
 	ScrollPane scroll = new ScrollPane();
 	scroll.setBounds(10, 250, d.width-20, d.height-260);
-	ArrayList<String> p = new Banco().produtos("");
-	System.out.println(p);
-		JList<String> lista = new JList<>(new AbstractListModel<>() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public int getSize() {
-				return p.size();
-			}
-			@Override
-			public String getElementAt(int index) {
-				return p.get(index);
-			}
-		});
+		JList<String> lista = new JList<>();
+		lista.setModel(getModelo(""));
 		lista.setBounds(scroll.getBounds());
 		lista.setFont(new Font("Tahoma", Font.PLAIN, 45));
 		lista.addListSelectionListener(new ListSelectionListener() {
@@ -590,48 +581,180 @@ public class Tela extends JFrame {
 	alt.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//criar input de novo nome e valor(deixar nome ja escrita caso queira alterar somente o valor).
+			new Tela().alterar(lista.getSelectedValue());
+			dispose();
 		}
 	});
 	del.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//deletar produto selecionado(ver no codigo acima como resgatar esse valor).
+			if(JOptionPane.showConfirmDialog(null, "Deletar "+lista.getSelectedValue()+"?", "Deletar!",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+				new Banco().alterar("0", "0", lista.getSelectedValue());
+				dispose();
+				new Tela().cadastro();
+			}
 		}
 	});
 	scroll.add(lista);
 	contentPane.add(scroll);
 	
 	//ADICIONAR
-		JButton add = new JButton("ADICIONAR");
-		add.setBounds(50, 205, 250, 40);
-		add.setFont(new Font("Tahoma", Font.PLAIN, 35));
-		add.addActionListener(new ActionListener() {
+	JButton add = new JButton("ADICIONAR");
+	add.setBounds(50, 205, 250, 40);
+	add.setFont(new Font("Tahoma", Font.PLAIN, 35));
+	add.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				String nome = JOptionPane.showInputDialog(null, "Digite o nome do produto:", "Nome", JOptionPane.OK_CANCEL_OPTION);
+				if(!nome.isBlank()) {
+					String valor = JOptionPane.showInputDialog(null, "Digite o valor:", "Valor", JOptionPane.OK_CANCEL_OPTION);
+					cadastrar(nome, valor);
+					lista.setModel(getModelo(""));
+				}else {
+					JOptionPane.showConfirmDialog(null, "Nome incorreto!", "Erro!", JOptionPane.OK_CANCEL_OPTION);
+					return;
+				}
+			}catch(Exception e1) {return;};
+		}
+	});
+	add.addKeyListener(new KeyAdapter() {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+				add.doClick();
+			}
+		}
+	});
+	lista.addMouseListener(new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			add.requestFocus();
+			if(e.getClickCount()==2) {
+				alt.doClick();
+			}
+		}
+	});
+	add.requestFocus();
+	contentPane.add(add);
+	
+	//BUSCA
+	JLabel lblbusca = new JLabel("BUSCA");
+	lblbusca.setBounds(10,50,150,40);
+	lblbusca.setFont(new Font("Tahoma", Font.PLAIN, 35));
+	contentPane.add(lblbusca);
+	
+	JTextField busca =  new JTextField();
+	busca.setBounds(150,50,d.width-200,40);
+	busca.setFont(new Font("Tahoma", Font.PLAIN, 35));
+	busca.addKeyListener(new KeyAdapter() {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if(e.getKeyCode() != KeyEvent.VK_ENTER || 
+				e.getKeyCode() != KeyEvent.VK_ESCAPE||
+				e.getKeyCode() != KeyEvent.VK_DELETE||
+				e.getKeyCode() != KeyEvent.VK_BACK_SPACE){
+				lista.setModel(getModelo(busca.getText()));
+				lista.setSelectedIndex(0);
+			}
+		}
+	});
+	contentPane.add(busca);
+	
+	
+	setVisible(true);
+	}
+	
+	public AbstractListModel<String> getModelo(String busca) {
+		try {
+			ArrayList<String> p = new Banco().produtos(busca);
+			return new AbstractListModel<String>() {
+				private static final long serialVersionUID = 1L;
+				@Override
+				public int getSize() {
+					return p.size();
+				}
+				@Override
+				public String getElementAt(int index) {
+					String[] noID = p.get(index).split(":");
+					return noID[1];
+				}
+			};
+		}catch(Exception e) {e.printStackTrace();return null;}
+	}
+	
+	public void alterar(String sel){
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds((d.width-800)/2,(d.height-500)/2,800,500);
+		setUndecorated(true);
+		JPanel altPane = new JPanel();
+		altPane.setLayout(null);
+		setContentPane(altPane);
+		
+		String[] s = sel.split(" ");
+		String nome = s[1];
+		String valor = s[3];
+		
+		//NOME
+		JLabel lblnome = new JLabel("Nome");
+		lblnome.setBounds(30,30,100,40);
+		lblnome.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		altPane.add(lblnome);
+		
+		JTextField Nome = new JTextField(nome);
+		Nome.setBounds(150,30,500,40);
+		Nome.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		altPane.add(Nome);
+		
+		//VALOR
+		JLabel lblval = new JLabel("Valor");
+		lblval.setBounds(30,90,100,40);
+		lblval.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		altPane.add(lblval);
+		
+		JTextField val = new JTextField(valor);
+		val.setBounds(150,90,500,40);
+		val.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		altPane.add(val);
+		
+		//OK BUTTON
+		JButton ok = new JButton("ALTERAR");
+		ok.setBounds(200,200,200,40);
+		ok.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		altPane.add(ok);
+		ok.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//utilizar metodo ja criado cadastrar e fazer campos para nome e preco.
+				new Banco().alterar(Nome.getText().trim(),val.getText(),sel);
+				dispose();
+				new Tela().cadastro();
 			}
 		});
-		add.addKeyListener(new KeyAdapter() {
+		ok.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
-					//utilizar metodo ja criado cadastrar e fazer campos para nome e preco.
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					ok.doClick();
 				}
 			}
 		});
-		lista.addMouseListener(new MouseAdapter() {
+		Nome.addKeyListener(new KeyAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				add.requestFocus();
-				if(e.getClickCount()==2) {
-					alt.doClick();
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					ok.doClick();
 				}
 			}
 		});
-		add.requestFocus();
-		contentPane.add(add);
-
+		val.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					ok.doClick();
+				}
+			}
+		});
+		
 		setVisible(true);
 	}
 	
@@ -642,12 +765,13 @@ public class Tela extends JFrame {
 		preco = preco.replaceAll(",", ".");
 		try {
 			float p = Float.parseFloat(preco);
-			new Banco().cadastrar(nome, p);
-			System.exit(0);
+			if(JOptionPane.showConfirmDialog(null, "Esta correto? \n Nome: "+nome+"\n"+" Valor: R$ "+preco, "Confirmar", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+				new Banco().cadastrar(nome, p);
+				return;
+			}else {return;}
 		}catch(Exception e) {
-			JOptionPane.showConfirmDialog(null, "Valor digitado esta incorreto!", "Falha no Banco de dados", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
+			JOptionPane.showConfirmDialog(null, "Valor incorreto!", "Erro!", JOptionPane.OK_CANCEL_OPTION);
+			return;
 		}
 	}
-	
 }

@@ -105,21 +105,22 @@ public class Banco {
 		ps.executeQuery();
 	}
 	
-	public void add(String id, String produto,Integer qtde) throws SQLException{
+	public void add(String id, String produto, Integer qtde) throws SQLException{
+		String[] s = produto.split(" ");
+		String sql = "SELECT * FROM produtos WHERE nome_produto LIKE '%"+s[1]+"%';";
+		PreparedStatement ps = this.Con().prepareStatement(sql);
+		ResultSet res = ps.executeQuery();
+		res.next();
+		produto = res.getString("id");
 		
-		String[] p = produto.split(":");
-		
-		
-		PreparedStatement ps;
-		ResultSet res ;
-		String sql = "SELECT * FROM controle WHERE id_cartao = "+id+" AND id_produto = "+p[0]+";";
+		sql = "SELECT * FROM controle WHERE id_cartao = "+id+" AND id_produto = "+produto+";";
 		ps = this.Con().prepareStatement(sql);
 		res = ps.executeQuery();
 		if(res.next()) {
-			sql = "UPDATE controle SET qtde = "+(Integer.parseInt(res.getString("qtde"))+qtde)+" WHERE id_cartao = "+id+" AND id_produto = "+p[0]+";";
+			sql = "UPDATE controle SET qtde = "+(Integer.parseInt(res.getString("qtde"))+qtde)+" WHERE id_cartao = "+id+" AND id_produto = "+produto+";";
 			ps.executeQuery(sql);
 		}else {
-			sql = "INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+id+", "+p[0]+", "+qtde+");";
+			sql = "INSERT INTO controle (id_cartao, id_produto, qtde) VALUES ("+id+", "+produto+", "+qtde+");";
 			ps = this.Con().prepareStatement(sql);
 			res = ps.executeQuery();
 		}
@@ -168,6 +169,29 @@ public class Banco {
 			String sql = "INSERT INTO produtos (nome_produto, valor) VALUES ('"+nome+"', "+p+");";
 			PreparedStatement ps = Con().prepareStatement(sql);
 			ps.executeQuery();
-		}catch(Exception e) {e.printStackTrace();}
+			System.out.println("Banco cadastrar => "+nome+", "+p);
+		}catch(Exception e) {e.printStackTrace();System.out.println("Erro cadastro no banco de dados!");}
+	}
+	
+	public void alterar(String nome, String valor, String id) {
+		valor = valor.replaceAll(",", ".");
+		nome = nome.replaceAll(" ", "_");
+		try {
+			Float val = Float.parseFloat(valor);
+			String[] b = id.split(" ");
+			String sql = "SELECT * FROM produtos WHERE nome_produto LIKE '%"+b[1]+"%';";
+			PreparedStatement ps = this.Con().prepareStatement(sql);
+			ResultSet res = ps.executeQuery();
+			res.next();
+			id = res.getString("id");
+			sql = "UPDATE produtos SET nome_produto = '"+nome+"' WHERE id = "+id+";";
+			ps = Con().prepareStatement(sql);
+			ps.executeQuery();
+			sql = "UPDATE produtos SET valor = "+val+" WHERE id = "+id+";";
+			ps = Con().prepareStatement(sql);
+			ps.executeQuery();
+			
+			System.out.println("Banco alterar => "+nome+", "+val+", "+id);
+		}catch(Exception e) {e.printStackTrace();System.out.println("Valor invalido!");}
 	}
 }
