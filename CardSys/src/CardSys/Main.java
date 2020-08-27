@@ -6,3 +6,5 @@ public class Main {
 		new Tela().inicio();
 	} 
 }
+
+//TRUNCATE TABLE tb_users;  /*Este comando reseta a tabela e a primary key*/
